@@ -87,7 +87,8 @@ Categories can be navigated with the links below:
 │   └── nixos-desktop/              # Main Workstation
 │       ├── configuration.nix       # System-level hardware tweaks
 │       ├── flatpak.nix             # Applications installed through flatpak
-│       └── local-packages.nix      # Host-specific packages
+│       ├── local-packages.nix      # Hosts-specific packages
+│       └── variables.nix           # Host-specific variables
 │
 ├── nixos/                          # ⚙️ System-wide Modules (Root)
 │   └── modules/                    # OS Components (Boot, Net, Users)

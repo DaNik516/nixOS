@@ -77,20 +77,20 @@
               kde
               flatpak
               term
-              screenshots
-              wallpapers
-              timeZone
-              weather
-              keyboardLayout
-              keyboardVariant
-              zramPercent
-              tailscale
-              guest
               base16Theme
               polarity
               catppuccin
               catppuccinFlavor
               catppuccinAccent
+              timeZone
+              weather
+              keyboardLayout
+              keyboardVariant
+              screenshots
+              tailscale
+              guest
+              zramPercent
+              wallpapers
               ;
           };
 
@@ -133,26 +133,26 @@
             inherit inputs pkgs-unstable;
             inherit (hostVars)
               hostname
-              homeStateVersion
-              term
               user
-              monitors
-              wallpapers
-              idleConfig
-              weather
-              screenshots
-              keyboardLayout
-              keyboardVariant
               gitUserName
               gitUserEmail
+              homeStateVersion
+              hyprland
+              gnome
+              kde
+              term
               base16Theme
               polarity
               catppuccin
               catppuccinFlavor
               catppuccinAccent
-              hyprland
-              gnome
-              kde
+              weather
+              keyboardLayout
+              keyboardVariant
+              screenshots
+              monitors
+              wallpapers
+              idleConfig
               ;
           };
 

@@ -21,7 +21,7 @@ Configures the bootloader (Systemd-boot). It manages EFI variables and detects o
 
 ## `core.nix`
 Import all the nixos modules. When a module is added in `nixos/modules/` it is necessary to add it here to allow nixos to see it
-- Desktop environment should not be added here because they are automatically enabled/disabled depending on the user choices in `flake.nix`
+- Desktop environment should not be added here because they are automatically enabled/disabled depending on the user choices in `variables.nix`
 
 
 ## `env.nix`
@@ -52,7 +52,7 @@ The system-side enabler. It installs the `Hyprland` binary, configures the sessi
 Control the behavior of the guest account.
 - Fixed uid (2000)
 - Script that tell the user the session data will be wiped and prompt to save data on cloud or external drive
-- Enable the modules only if guest = true in flake.nix
+- Enable the modules only if guest = true in variables.nix
 - create guest account
 - allow login with no password while in sddm
 - setup xfce session

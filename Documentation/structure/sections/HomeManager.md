@@ -23,18 +23,18 @@ A simple list of user-space packages (like neovim, Discord, btop) that are insta
 ### `alacritty.nix`
 Terminal emulator configuration.
 This is also where the package is installed. So it is not inside `local-packages` or `home-packages`
-* **Theming:** Uses the base16 themes or catppuccin official nix repo based on the user choice in `flake.nix`
+* **Theming:** Uses the base16 themes or catppuccin official nix repo based on the user choice in `variables.nix`
 * **Font:** Set the font weight (regular/bold, etc) and it chooses the font size in a smart way based on the size of the user monitors
   * In a multi-monitor setup it takes the first one of the monitors list  
 
 ### `bat.nix`
 Configuration for `bat` (a modern `cat` clone).
 
-* **Theming:** Uses the base16 themes or catppuccin official nix repo based on the user choice in `flake.nix`
+* **Theming:** Uses the base16 themes or catppuccin official nix repo based on the user choice in `variables.nix`
 
 ### `cava.nix`
 An audio visualizer in the terminal. It contains configurable graph stiles bars that follow the audio if the hosts is playing somethihng
-* **Theming:** Uses the base16 themes or catppuccin official nix repo based on the user choice in `flake.nix`
+* **Theming:** Uses the base16 themes or catppuccin official nix repo based on the user choice in `variables.nix`
 
 ### `chromium.nix`
 Browser configuration for Chromium.
@@ -47,7 +47,7 @@ Browser configuration for Chromium.
 The "Hub". It imports every single other file in this directory. 
 - If a new module is created, it *must* be added here for Home Manager to see it.
 - To disable a certain module commenting it here is another way for disabling it
-- Desktop environment should not be added here because they are automatically enabled/disabled depending on the user choices in `flake.nix`
+- Desktop environment should not be added here because they are automatically enabled/disabled depending on the user choices in `variables.nix`
 
 ### `dolphin.nix`
 Configuration for the KDE/Qt file manager.
@@ -55,31 +55,31 @@ Configuration for the KDE/Qt file manager.
 
 ### `eza.nix`
 Configuration for `eza` (a modern `ls` clone).
-* **Theming:** Uses the base16 themes or catppuccin official nix repo based on the user choice in `flake.nix`
+* **Theming:** Uses the base16 themes or catppuccin official nix repo based on the user choice in `variables.nix`
 
 ### `firefox.nix`
 The primary browser configuration.
 * **Hardening:** Includes privacy tweaks (disabling telemetry, sponsored tiles).
 * **Configuration:** Includes a profile (with the same name as the hosts username) with extensions and bookmarks and homepage
   * The homepage needs to be changed. It's a url that only krit has access to 
-* **Theming:** Uses the base16 themes or catppuccin official nix repo based on the user choice in `flake.nix`
+* **Theming:** Uses the base16 themes or catppuccin official nix repo based on the user choice in `variables.nix`
   * To alllow theming to work it is necessary to force the `firefox-color` extensions
   * For now there is a `force = true` meaning all extensions are forced to be installed
 
 ### `git.nix`
 Git version control settings.
-* **User-identity:** It takes the github username and e-mail from `flake.nix` (hosts-specific)
+* **User-identity:** It takes the github username and e-mail from `variables.nix` (hosts-specific)
 
 ### `kitty.nix`
 Terminal emulator configuration.
 This is also where the package is installed. So it is not inside `local-packages` or `home-packages`
-* **Theming:** Uses the base16 themes or catppuccin official nix repo based on the user choice in `flake.nix`
+* **Theming:** Uses the base16 themes or catppuccin official nix repo based on the user choice in `variables.nix`
 * **Font:** Set the font weight (regular/bold, etc) and it chooses the font size in a smart way based on the size of the user monitors
   * In a multi-monitor setup it takes the first one of the monitors list  
 
 ### `lazygit.nix`
 Configuration for the terminal UI for Git.
-* **Theming:** Uses the base16 themes or catppuccin official nix repo based on the user choice in `flake.nix`
+* **Theming:** Uses the base16 themes or catppuccin official nix repo based on the user choice in `variables.nix`
 
 ### `neovim.nix`
 Wrapper for the Neovim text editor.
@@ -98,13 +98,13 @@ Terminal file manager configuration. Styled via global Stylix Base16 rules.
 
 ### `starship.nix`
 Shell prompt configuration.
-* **Theming:** Uses the base16 themes or catppuccin official nix repo based on the user choice in `flake.nix` 
+* **Theming:** Uses the base16 themes or catppuccin official nix repo based on the user choice in `variables.nix` 
 * **Features** It configures the prompt to show specific symbols for SSH sessions, Git status, and errors.
 
 
 ### `stylix.nix`
 The central theming engine for the system.
-* **Theming:** Acts as a "switch" between two modes based on the user's choice in `flake.nix`:
+* **Theming:** Acts as a "switch" between two modes based on the user's choice in `variables.nix`:
     * **Stylix Mode (`catppuccin = false`):** Automatically generates themes for GTK, Wallpapers, and apps using a specific **Base16 scheme** (e.g., `gruvbox`, `dracula`)
   
     * **Catppuccin Mode (`catppuccin = true`):** Disables Stylix's automation for specific apps (like GTK, Alacritty, Hyprland) and manually injects the official **Catppuccin** theme with the user's chosen flavor and accent
@@ -121,7 +121,7 @@ The central theming engine for the system.
 
 ### `tmux.nix`
 Terminal multiplexer configuration. Includes behaviour and keybindings
-* **Theming:** Uses the base16 themes or catppuccin official nix repo based on the user choice in `flake.nix`
+* **Theming:** Uses the base16 themes or catppuccin official nix repo based on the user choice in `variables.nix`
 * 
 * **Features:**
     * **Navigation:** Configures a `keybindings + Arrow keys` to switch panes and a `keybindings + Number keys` to switch windows instantly
@@ -132,10 +132,10 @@ Terminal multiplexer configuration. Includes behaviour and keybindings
 
 ### `zathura.nix`
 Minimalist and keyboard-driven PDF viewer configuration.
-* **Theming:** Uses the base16 themes or catppuccin official nix repo based on the user choice in `flake.nix`.
+* **Theming:** Uses the base16 themes or catppuccin official nix repo based on the user choice in `variables.nix`.
 * **Font:** The size and font is hardcoded
 
-*  It features **dynamic UI scaling**, automatically adjusting the font size based on the monitor resolution defined in `flake.nix` (e.g., larger fonts for 4K screens).
+*  It features **dynamic UI scaling**, automatically adjusting the font size based on the monitor resolution defined in `variables.nix` (e.g., larger fonts for 4K screens).
   
 * **Features:**
     * **Vim Navigation:** Implements standard Vim-style keybindings (`j`/`k` for scrolling, `J`/`K` for page jumping, `d`/`u` for rapid navigation) for a seamless keyboard-only workflow.
@@ -162,7 +162,7 @@ This file handles the visual configuration of the GNOME session, including wallp
 
 * **Wallpaper:** As far as i know gnome does not allow to use nix os to define different wallpapers based on different monitor. A tool called `hydrapaper` should allow to do so. It is installed as a package in case it is needed 
 * **Theming Logic:**
-  * **Icons:** It intelligently selects between `Papirus-Dark` or `Papirus-Light` based on the global `polarity` variable defined in `flake.nix`.
+  * **Icons:** It intelligently selects between `Papirus-Dark` or `Papirus-Light` based on the global `polarity` variable defined in `variables.nix`.
   * **Catppuccin:** If Catppuccin is enabled, it installs the necessary GTK theme packages but allows the global **Stylix** module to handle the actual application of the GTK theme string (to prevent conflicts). It manually enforces the icon theme to ensure consistency.
 
 
@@ -185,7 +185,7 @@ This is the module entry point for the Hyprland configuration folder. It uses th
 ### `hyprland-hypridle.nix`
 This file configures the system's idle behavior using the `hypridle` daemon. It defines a series of timeouts that trigger specific power-management actions when the computer is left inactive, such as dimming the screen, locking the session, turning off monitors, and finally suspending the system. It includes fallback logic to use default values if specific host configurations are missing.
 
-The variables are hosts-specific, so they are defined and changed in `flake.nix`. It include a fallback logic
+The variables are hosts-specific, so they are defined and changed in `variables.nix`. It include a fallback logic
 
 
 ### `hyprland-hyprlock.nix`
@@ -227,7 +227,7 @@ input-field = [
 ### `hyprland-hyprpaper.nix`
 Set wallpapers using `hyprpaper` and assigns them to specific monitor ports (eg. DP-1). It does not apply a wallpaper to a disabled monitor. The wallpapers are defined in a list, allowing as many wallpapers as needed. They are applied from top to bottom in the same order as the `monitors` block. So first wallpaper goes to first monitor in the list
 
-The wallpapers are hosts-specific, so they are defined and changed in `flake.nix`. It include a fallback logic.
+The wallpapers are hosts-specific, so they are defined and changed in `variables.nix`. It include a fallback logic.
 
 * **Fallback logic:** It handles 2 cases (in the `get.Wallpaper` function):
   * More wallpapers than monitors: Since it goes from top to bottom once all monitors are covered the remaining wallpapers are ignored
