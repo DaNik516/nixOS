@@ -43,7 +43,7 @@
     }@inputs:
     let
       # 📋 LIST OF HOSTS
-      # Just list the folder names here.
+      # When adding a new host, add/replace its name here
       hostNames = [
         "nixos-desktop"
         "nixos-laptop"

@@ -64,6 +64,7 @@
     }
   ];
 
+  # 🔋 POWER MANAGEMENT
   idleConfig = {
     enable = true;
     dimTimeout = 600;
