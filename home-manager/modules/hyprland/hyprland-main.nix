@@ -1,0 +1,192 @@
+{
+  config,
+  lib,
+  screenshots,
+  monitors,
+  keyboardLayout,
+  keyboardVariant,
+  catppuccin,
+  catppuccinFlavor,
+  catppuccinAccent,
+  term,
+  ...
+}:
+{
+  # ----------------------------------------------------------------------------
+  # 🎨 CATPPUCCIN THEME (official module)
+  catppuccin.hyprland.enable = catppuccin;
+  catppuccin.hyprland.flavor = catppuccinFlavor;
+  catppuccin.hyprland.accent = catppuccinAccent;
+  # ----------------------------------------------------------------------------
+  wayland.windowManager.hyprland = {
+    enable = true;
+    systemd.enable = true;
+    settings = {
+
+      # -----------------------------------------------------
+      # 🌍 Environment Variables
+      # -----------------------------------------------------
+      # These ensure apps (Electron, QT, etc.) know they are running on Wayland.
+      env = [
+        "NIXOS_OZONE_WL,1" # Forces Electron apps (Code, Discord) to use Wayland
+        "XDG_CURRENT_DESKTOP,Hyprland"
+        "XDG_SESSION_TYPE,wayland"
+        "XDG_SESSION_DESKTOP,Hyprland"
+        "QT_QPA_PLATFORM,wayland" # Forces QT apps to use Wayland
+        "XDG_SCREENSHOTS_DIR,${screenshots}" # Default folder for screenshots
+        "QT_QPA_PLATFORMTHEME,qt5ct" # Needed to keep hyprland config and not mess with kde
+        "QT_QPA_PLATFORM,wayland;xcb" # Fallback to xcb if wayland fails
+      ];
+
+      # -----------------------------------------------------
+      # 🖥️ Monitor Configuration
+      # -----------------------------------------------------
+      # Syntax: "PORT, RESOLUTION@HERTZ, POSITION, SCALE, TRANSFORM"
+      monitor = monitors ++ [
+        ",preferred,auto,1" # Fallback in case no monitors are defined in flake.nix
+      ];
+
+      # -----------------------------------------------------
+      # 🎛️ Main Hyprland apps
+      # These are used by other modules using the variable references such as binds.nix
+      # -----------------------------------------------------
+      "$mainMod" = "SUPER";
+      "$term" = term; # Preferred terminal emulator. Can be changed to any hm installed
+      "$fileManager" = "$term -e sh -c 'ranger'";
+      "$menu" = "wofi";
+
+      # -----------------------------------------------------
+      # 🚀 Startup Apps
+      # ----------------------------------------------------
+      exec-once = [
+        "waybar" # Start waybar
+        "wl-paste --type text --watch cliphist store" # Start clipboard manager for text
+        "wl-paste --type image --watch cliphist store" # Start clipboard manager for images
+      ];
+
+      # -----------------------------------------------------
+      # 🎨 Look & Feel
+      # -----------------------------------------------------
+      general = {
+        gaps_in = 0; # Gaps between windows
+        gaps_out = 0; # Gaps between windows and monitor edge
+        border_size = 5; # Thickness of window borders
+
+        # 🎨 BORDERS
+        # Border colors adapt based on whether catppuccin is enabled
+        "col.active_border" = if catppuccin then "$accent" else "rgb(${config.lib.stylix.colors.base0D})";
+
+        "col.inactive_border" =
+          if catppuccin then "$overlay0" else "rgb(${config.lib.stylix.colors.base03})";
+
+        resize_on_border = true;
+
+        allow_tearing = false;
+        layout = "dwindle";
+      };
+
+      decoration = {
+        rounding = 0;
+        active_opacity = 1.0;
+        inactive_opacity = 1.0;
+        shadow = {
+          enabled = false;
+        };
+
+        blur = {
+          enabled = false;
+        };
+      };
+
+      animations = {
+        enabled = true;
+      };
+
+      # Layouts are defined in flake.nix and are handled
+      # in such a way that they work regardless of desktop environment
+      input = {
+        kb_layout = keyboardLayout;
+        kb_variant = keyboardVariant;
+        kb_options = "grp:alt_shift_toggle"; # Alt+Shift to switch layout
+      };
+
+      dwindle = {
+        pseudotile = true;
+        preserve_split = true;
+      };
+
+      master = {
+        new_status = "slave";
+        new_on_top = true;
+        mfact = 0.5;
+      };
+
+      misc = {
+        force_default_wallpaper = 0;
+        disable_hyprland_logo = true;
+      };
+
+      windowrulev2 = [
+        # --- 1. System & UI Rules ---
+        # Smart Borders: No border if only 1 window is on screen
+        "bordersize 0, floating:0, onworkspace:w[t1]"
+
+        #ShowMeTheKey  fixes. ShowMetheKey is a GTK app for displaying keypresses on screen.
+        "float,class:(mpv)|(imv)|(showmethekey-gtk)" # Float media viewers and ShowMeTheKey
+        "move 990 60,size 900 170,pin,noinitialfocus,class:(showmethekey-gtk)" # Position ShowMeTheKey
+        "noborder,nofocus,class:(showmethekey-gtk)" # No border for ShowMeTheKey
+
+        # --- 2. App Assignments (The "Reserved Seating") ---
+        # Forces specific apps to always open on specific workspaces
+        # To see the right class name, use `hyprctl clients` command and look for "class:"
+        "workspace 2, class:^(code)$"
+        "workspace 7, class:^(chromium-browser)$"
+        "workspace 8, class:^(Alacritty)$"
+        "workspace 8, class:^(kitty)$"
+        "workspace 9, class:^(vesktop)$"
+        "workspace 10, class:^(org.telegram.desktop)$"
+
+        # Prevent apps from auto-maximizing themselves
+        "suppressevent maximize, class:.*"
+        "nofocus,class:^$,title:^$,xwayland:1,floating:1,fullscreen:0,pinned:0"
+
+        # 1. Force them to FLOAT (detach from tiling grid)
+        # 2. Force them to CENTER (relative to the monitor, not the app)
+        # 3. Force a fixed SIZE (60% width/height = 20% margin on all sides)
+        "float, title:^(Open File|Save As|File Upload|Select a File|Choose wallpaper|Open Folder|Library)(.*)$"
+        "center, title:^(Open File|Save As|File Upload|Select a File|Choose wallpaper|Open Folder|Library)(.*)$"
+        "size 60% 60%, title:^(Open File|Save As|File Upload|Select a File|Choose wallpaper|Open Folder|Library)(.*)$"
+
+        # Specific fix for XDG Desktop Portal (common Linux file picker)
+        "float, class:^(xdg-desktop-portal-gtk)$"
+        "center, class:^(xdg-desktop-portal-gtk)$"
+        "size 60% 60%, class:^(xdg-desktop-portal-gtk)$"
+
+        # --- 3. original xwayland video bridge rules ---
+        "opacity 0.0 override, class:^(xwaylandvideobridge)$"
+        "noanim, class:^(xwaylandvideobridge)$"
+        "noinitialfocus, class:^(xwaylandvideobridge)$"
+        "maxsize 1 1, class:^(xwaylandvideobridge)$"
+        "noblur, class:^(xwaylandvideobridge)$"
+        "nofocus, class:^(xwaylandvideobridge)$"
+      ];
+
+      workspace = [
+        "w[tv1], gapsout:0, gapsin:0" # No gaps if only 1 window is visible
+        "f[1], gapsout:0, gapsin:0" # No gaps if window is fullscreen
+
+        "1, monitor:DP-1"
+        "2, monitor:DP-1"
+        "3, monitor:DP-1"
+        "4, monitor:DP-1"
+        "5, monitor:DP-1"
+
+        "6, monitor:DP-2"
+        "7, monitor:DP-2"
+        "8, monitor:DP-2"
+        "9, monitor:DP-2"
+        "10, monitor:DP-2"
+      ];
+    };
+  };
+}

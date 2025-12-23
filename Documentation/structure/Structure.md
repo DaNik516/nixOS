@@ -1,0 +1,113 @@
+# 📂 Project Structure
+
+This repository separates the **System Configuration** (root-level/OS) from the **User Configuration** (home-manager/apps).
+
+This guide contains an in-depth analysis of every file
+
+Categories can be navigated with the links below:
+
+* **[❄️ Core Configuration](./sections/Core.md)**: Entry point (`flake.nix`), inputs, and global variables.
+* **[⚙️ System Modules (NixOS)](./sections/NixOS.md)**: Bootloader, hardware, networking, and user management.
+* **[🏠 User Modules (Home Manager)](./sections/HomeManager.md)**: Applications, themes, Hyprland, and shell customization.
+
+
+## 🌳 File Tree
+
+```text
+.
+├── flake.nix                        # ❄️ Entry point: Inputs, hosts, and global variables
+│
+├── home-manager/                   # 🏠 User-specific configuration (The "Rice")
+│   │
+│   ├── home.nix                    # Main user entry point and directory setup
+│   ├── home-packages.nix           # List of user-only software
+│   │
+│   └── modules/                    # Application-specific configurations
+│       ├── alacritty.nix           # Terminal settings
+│       ├── bat.nix                 # 'cat' clone settings
+│       ├── cava.nix                # Cli audio visualizer
+│       ├── chromium.nix            # Browser settings
+│       ├── core.nix                # Module importer
+│       ├── dolphin.nix             # KDE File Manager
+│       ├── eza.nix                 # 'ls' clone settings
+│       ├── firefox.nix             # Firefox settings & hardening
+│       ├── git.nix                 # Git credentials & aliases
+│       ├── kitty.nix               # Terminal settings
+│       │ 
+│       ├── gnome/                  # gnome-specific configuration
+│       │   ├── gnome-binds.nix           # gnome keyboard shortcuts
+│       │   ├── default.nix         # Gnome redirector
+│       │   └── gnome-main.nix            # Core Gnome rules
+│       │
+│       ├── hyprland/               # Hyprland-specific configuration
+│       │   ├── hyprland-binds.nix           # Keyboard shortcuts
+│       │   ├── default.nix         # Hyprland Redirector
+│       │   ├── hyprland-hypridle.nix        # Idle daemon (auto-lock/sleep)
+│       │   ├── hyprland-hyprlock.nix        # Lock screen styling
+│       │   ├── hyprland-hyprpaper.nix       # Wallpaper daemon
+│       │   └── hyprland-main.nix            # Core Hyprland rules
+│       │ 
+│       ├── kde/                    # KDE-specific configuration
+│       │   ├── default.nix         # KDE Redirector
+│       │   ├── kde-desktop.nix         # KDE Desktop configuration
+│       │   ├── kde-files.nix           # KDE Low-level files behaviour configuration
+│       │   ├── kde-inputs.nix          # KDE hardware (mouse and trackpad) configuration
+│       │   ├── kde-krunner.nix         # KDE Krunner configuration
+│       │   ├── kde-kscreenlock.nix     # KDE screen locker configuration
+│       │   ├── kde-main.nix            # KDE Core rules
+│       │   ├── kde-panels.nix          # KDE taskbar configuration
+│       │   └── kde-binds.nix       # KDE keyboard shortcuts configuration
+│       │ 
+│       ├── lazygit.nix             # Git TUI settings
+│       ├── neovim.nix              # Editor wrapper (uses dotfiles)
+│       ├── qt.nix                  # Manual QT/Kvantum theming logic
+│       ├── ranger.nix              # Terminal file manager
+│       ├── starship.nix            # Shell prompt customization
+│       ├── stylix.nix              # Global Base16 theme engine
+        │
+│       ├── swaync/                 # Notification Center
+│       │   ├── default.nix         # Notification logic & CSS injection
+│       │   └── style.css           # Custom CSS styling (ignored)
+│       │
+│       ├── tmux.nix                # Terminal Multiplexer
+│       │
+│       ├── waybar/                 # Status Bar
+│       │   ├── default.nix         # Layout & module definition
+│       │   └── style.css           # Custom CSS styling
+│       │
+│       ├── wofi/                    # App Launcher
+│       │   ├── default.nix         # Logic & CSS injection
+│       │   └── style.css           # Manual CSS styling
+│       │
+│       ├── zathura.nix             # PDF Viewer
+│       └── zsh.nix                 # Shell aliases & history
+│
+├── hosts/                          # 🖥️ Host-specific overrides
+│   │
+│   └── nixos-desktop/              # Main Workstation
+│       ├── configuration.nix       # System-level hardware tweaks
+│       ├── flatpak.nix             # Applications installed through flatpak
+│       └── local-packages.nix      # Host-specific packages
+│
+├── nixos/                          # ⚙️ System-wide Modules (Root)
+│   └── modules/                    # OS Components (Boot, Net, Users)
+│       ├── audio.nix               # Pipewire/PulseAudio
+│       ├── bluetooth.nix           # Bluetooth logic
+│       ├── boot.nix                # Bootloader (Systemd-boot)
+│       ├── core.nix                # Import all nixOS system modules
+│       ├── env.nix                 # Global environment variables
+│       ├── home-manager.nix        # HM integration hooks
+│       ├── hyprland.nix            # System-level Hyprland enablement
+│       ├── KDE.nix                 # System-level KDE enablement
+│       ├── guest.nix               # Handle the guest user
+│       ├── kernel.nix              # Kernel parameters
+│       ├── mime.nix                # Default app associations
+│       ├── net.nix                 # NetworkManager & Hostname
+│       ├── nh.nix                  # Nix Helper tool config
+│       ├── nix.nix                 # Nix Daemon settings
+│       ├── timezone.nix            # Locale & Time settings
+│       ├── user.nix                # User accounts & groups
+│       └── zram.nix                # Memory optimization
+└── screenshots/                    # Assets for README
+```
+

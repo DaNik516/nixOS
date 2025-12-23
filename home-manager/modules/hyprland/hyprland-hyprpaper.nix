@@ -1,0 +1,36 @@
+{
+  pkgs,
+  lib,
+  monitors,
+  wallpapers,
+  ...
+}:
+let
+
+  # Do not apply wallpapers to disabled monitors
+  activeMonitors = builtins.filter (m: !(lib.hasInfix "disable" m)) monitors;
+  monitorPorts = map (m: builtins.head (lib.splitString "," m)) activeMonitors;
+
+  images = map (
+    w:
+    pkgs.fetchurl {
+      url = w.wallpaperURL;
+      sha256 = w.wallpaperSHA256;
+    }
+  ) wallpapers;
+
+  getWallpaper =
+    index: if index < builtins.length images then builtins.elemAt images index else lib.last images;
+
+in
+{
+  services.hyprpaper = {
+    enable = true;
+    package = pkgs.hyprpaper;
+
+    settings = {
+      preload = map (i: "${i}") images;
+      wallpaper = lib.imap0 (i: port: "${port}, ${getWallpaper i}") monitorPorts;
+    };
+  };
+}
