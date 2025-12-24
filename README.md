@@ -331,7 +331,7 @@ To have a working setup every single variable needs to be defined, otherwise the
 
    * `gnome` : Whatever to enable gnome or not
 
-   * `kde` L: Whatever to enable kde or not
+   * `kde`: Whatever to enable kde or not
   
   * `flatpak` : Whatever to enable support for flatpak
   
@@ -399,8 +399,9 @@ To have a working setup every single variable needs to be defined, otherwise the
   system = "x86_64-linux";
 
   # ⚙️ VERSIONS
-  # These should generally match your flake inputs, but are defined here
-  # so configuration.nix can read them.
+  # During the first installation it is a good idea to make them the same as the other versions
+  # Later where other version may be updated these 2 should not be changed, meaning they should remain what they were at the beginning
+  # These 2 versions define where there system was created, and keeping them always the same it is a better idea
   stateVersion = "25.11";
   homeStateVersion = "25.11";
 
