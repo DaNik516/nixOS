@@ -109,6 +109,7 @@ Categories can be navigated with the links below:
 │       ├── timezone.nix                           # Locale & Time settings
 │       ├── user.nix                               # User accounts & groups
 │       └── zram.nix                               # Memory optimization
+│
 └── screenshots/                                   # Assets for README
 ```
 
