@@ -18,6 +18,7 @@
   imports = [
     ./hardware-configuration.nix
     ./local-packages.nix
+    ./secrets.nix
     ./flatpak.nix
     ../../nixos/modules/core.nix
   ];

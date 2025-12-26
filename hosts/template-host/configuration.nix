@@ -113,18 +113,6 @@
     "flakes"
   ];
 
-  programs.chromium = {
-    enable = true;
-
-    extraOpts = {
-      "ShowHomeButton" = true;
-      "HomepageLocation" = "https://www.youtube.com";
-      "HomepageIsNewTabPage" = false;
-      "RestoreOnStartup" = 4;
-      "RestoreOnStartupURLs" = [ "https://www.youtube.com" ];
-    };
-  };
-
   # Defines the state version dynamically based on flake.nix input
   system.stateVersion = stateVersion;
 }
