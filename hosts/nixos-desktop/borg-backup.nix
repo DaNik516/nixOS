@@ -42,13 +42,13 @@ in
           "/home/*/Downloads"
           "/home/*/.local/share/Trash"
 
-          # 2. DEV TOOLS & LANGUAGES (New additions)
+          # 2. DEV TOOLS & LANGUAGES
           "/home/*/.vscode/extensions" # Heavy! Re-installs via Sync
           "/home/*/.vscode/cli"
-          "/home/*/.local/share/zeal" # Docsets (Downloadable)
-          "/home/*/.dotnet" # .NET Debugger/Cache
-          "/home/*/.redhat" # Java/XML Language Server Cache
-          "/home/*/.sts4" # Spring Boot Tooling Cache
+          "/home/*/.local/share/Zeal"
+          "/home/*/.dotnet"
+          "/home/*/.redhat"
+          "/home/*/.sts4"
 
           # 3. CACHE & JUNK
           "/home/*/.cache"
