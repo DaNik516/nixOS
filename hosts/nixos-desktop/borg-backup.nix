@@ -44,13 +44,19 @@ in
           "/home/*/.local/share/recent-documents"
 
           # 2. CLIPBOARD & DOCS
-          "/home/*/.local/share/klipper" # Clipboard History
-          "/home/*/.local/share/Zeal" # Documentation Sets
+          "/home/*/.local/share/klipper"
+          "/home/*/.local/share/Zeal"
 
-          # 3. TELEGRAM JUNK (Keep login, remove temp)
+          # 3. TELEGRAM & CHAT JUNK
           "/home/*/.local/share/TelegramDesktop/tdata/emoji"
           "/home/*/.local/share/TelegramDesktop/tdata/temp"
           "/home/*/.local/share/TelegramDesktop/tdata/dumps"
+
+          # VESKTOP / DISCORD (The monster from your log)
+          "/home/*/.config/vesktop/sessionData"
+          "/home/*/.config/vesktop/Cache"
+          "/home/*/.config/vesktop/Code Cache"
+          "/home/*/.config/vesktop/GPUCache"
 
           # 4. BROWSERS (Synced)
           "/home/*/.mozilla"
@@ -58,22 +64,22 @@ in
           "/home/*/.config/chromium"
           "/home/*/.config/BraveSoftware"
 
-          # 5. DEV TOOLS (SYNCED - NUKE IT ALL)
+          # 5. DEV TOOLS (Synced)
           "/home/*/.eclipse"
           "/home/*/.p2"
           "/home/*/.vscode"
-          "/home/*/.config/Code" # <--- REMOVES EVERYTHING (You use Sync)
-          "/home/*/.config/Cursor" # <--- REMOVES EVERYTHING (You use Sync)
+          "/home/*/.config/Code"
+          "/home/*/.config/Cursor"
 
-          # 6. FLATPAK & SYSTEM JUNK
+          # 6. SYSTEM JUNK
           "/home/*/.var/app/*/cache"
           "/home/*/.local/share/flatpak"
           "/home/*/.local/share/nvim"
           "/home/*/.local/share/baloo"
           "/home/*/.local/state"
+          "/home/*/.cache"
 
           # 7. PACKAGE MANAGERS
-          "/home/*/.cache"
           "/home/*/.npm"
           "/home/*/.cargo"
           "/home/*/.m2"
@@ -89,10 +95,7 @@ in
           "/home/*/progettoFDI"
           "/home/*/tools"
 
-          # 9. APP CACHES
-          "/home/*/.config/vesktop/Cache"
-          "/home/*/.config/vesktop/Code Cache"
-          "/home/*/.config/vesktop/GPUCache"
+          # 9. GENERIC APP CACHES
           "/home/*/.config/obsidian/Cache"
           "/home/*/.config/obsidian/GPUCache"
           "/home/*/.config/Slack/Cache"
