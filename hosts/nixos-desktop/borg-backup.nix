@@ -35,76 +35,81 @@ in
 
         # 2. Exclusions
         exclude_patterns = [
-          # 1. STANDARD HEAVY FILES
-          "*.vdi"
-          "*.qcow2"
-          "*.iso"
+          # -------------------------------------------------------------------
+          # 1. THE "ELECTRON KILLER" (Smart Generic Rules)
+          # -------------------------------------------------------------------
+          # Catches junk from Discord, Obsidian, VSCode, Slack, Element, etc.
+          # automatically, so you don't have to list them one by one.
+          "*/Code Cache"
+          "*/GPUCache"
+          "*/DawnWebGPUCache"
+          "*/DawnGraphiteCache"
+          "*/Session Storage"
+          "*/blob_storage"
+          "*/PersistentCache" # Common in Spotify/Media apps
+
+          # -------------------------------------------------------------------
+          # 2. NOISY FILE EXTENSIONS
+          # -------------------------------------------------------------------
+          "*.log"
+          "*.tmp"
+          "*.bak"
+          "*.sock"
+          "*.vdi" # VirtualBox Disks
+          "*.qcow2" # QEMU Disks
+          "*.iso" # Disk Images
+
+          # -------------------------------------------------------------------
+          # 3. HEAVY STANDARD DIRECTORIES
+          # -------------------------------------------------------------------
           "/home/*/Downloads"
           "/home/*/.local/share/Trash"
           "/home/*/.local/share/recent-documents"
+          "/home/*/.cache" # The standard Linux cache folder
+          "/home/*/.local/state" # Often contains logs/history
+          "/home/*/.local/share/baloo" # KDE File Indexer (huge)
 
-          # 2. CLIPBOARD & DOCS
-          "/home/*/.local/share/klipper"
-          "/home/*/.local/share/Zeal"
-
-          # 3. TELEGRAM & CHAT JUNK
-          "/home/*/.local/share/TelegramDesktop/tdata/emoji"
-          "/home/*/.local/share/TelegramDesktop/tdata/temp"
-          "/home/*/.local/share/TelegramDesktop/tdata/dumps"
-
-          # VESKTOP / DISCORD (The monster from your log)
-          "/home/*/.config/vesktop/sessionData"
-          "/home/*/.config/vesktop/Cache"
-          "/home/*/.config/vesktop/Code Cache"
-          "/home/*/.config/vesktop/GPUCache"
-
-          # 4. BROWSERS (Synced)
+          # -------------------------------------------------------------------
+          # 4. BROWSERS (Synced/Heavy)
+          # -------------------------------------------------------------------
+          # These are too big and usually sync via cloud accounts anyway.
           "/home/*/.mozilla"
           "/home/*/.config/google-chrome"
           "/home/*/.config/chromium"
           "/home/*/.config/BraveSoftware"
 
-          # 5. DEV TOOLS (Synced)
-          "/home/*/.eclipse"
-          "/home/*/.p2"
-          "/home/*/.vscode"
-          "/home/*/.config/Code"
-          "/home/*/.config/Cursor"
-
-          # 6. SYSTEM JUNK
-          "/home/*/.var/app/*/cache"
-          "/home/*/.local/share/flatpak"
-          "/home/*/.local/share/nvim"
-          "/home/*/.local/share/baloo"
-          "/home/*/.local/state"
-          "/home/*/.cache"
-          "/home/*/.config/libreoffice/*/cache"
-
-          # 7. PACKAGE MANAGERS
-          "/home/*/.npm"
+          # -------------------------------------------------------------------
+          # 5. DEVELOPER TOOLS & LANGUAGES
+          # -------------------------------------------------------------------
           "/home/*/.cargo"
-          "/home/*/.m2"
+          "/home/*/.npm"
+          "/home/*/.m2" # Java Maven
           "/home/*/.gradle"
           "/home/*/.dotnet"
-          "/home/*/.redhat"
-          "/home/*/.sts4"
+          "/home/*/.p2" # Eclipse
+          "/home/*/.vscode" # Extensions are re-downloadable
+          "/home/*/.config/Code"
+          "/home/*/.config/Cursor"
+          "/home/*/.var/app/*/cache" # Flatpak caches
 
-          # 8. SYNCED FOLDERS
+          # -------------------------------------------------------------------
+          # 6. SPECIFIC APP CLUTTER
+          # -------------------------------------------------------------------
+          # Things that don't fit the generic rules perfectly
+          "/home/*/.local/share/TelegramDesktop/tdata/emoji"
+          "/home/*/.local/share/TelegramDesktop/tdata/temp"
+          "/home/*/.local/share/Zeal" # Offline doc sets (re-downloadable)
+          "/home/*/.config/libreoffice/*/cache"
+
+          # -------------------------------------------------------------------
+          # 7. YOUR PERSONAL SYNCED FOLDERS
+          # -------------------------------------------------------------------
+          # Assuming these are backed up via Git or Syncthing already
           "/home/*/developing-projects"
           "/home/*/dotfiles"
           "/home/*/nixOS"
           "/home/*/progettoFDI"
           "/home/*/tools"
-
-          # 9. GENERIC APP CACHES
-          "/home/*/.config/obsidian/Cache"
-          "/home/*/.config/obsidian/GPUCache"
-          "/home/*/.config/obsidian/Code Cache"
-          "/home/*/.config/obsidian/Dawn*"
-          "/home/*/.config/obsidian/Session Storage"
-
-          "/home/*/.config/Slack/Cache"
-          "/home/*/.config/Spotify/PersistentCache"
         ];
 
         # 3. Storage & Encryption
