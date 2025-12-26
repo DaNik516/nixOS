@@ -22,10 +22,10 @@
 
         # Nix specific
         swpure = "cd ${flakeDir} &&  nh os switch ${flakeDir}"; # Switch NixOS configuration (pure)
-        sw = "cd ${flakeDir} &&  nh os switch ${flakeDir} -- --impure"; # Switch NixOS configuration (impure)
+        sw = "cd ${flakeDir} &&  sudo nixos-rebuild switch --flake . --impure"; # Switch NixOS configuration (impure)
 
         updpure = "cd ${flakeDir} && nh os switch --update ${flakeDir}"; # Update and switch NixOS configuration (pure)
-        upd = "cd ${flakeDir} && nh os switch --update ${flakeDir} -- --impure"; # Update and switch NixOS configuration (impure)
+        upd = "cd ${flakeDir} && nix flake update && sudo nixos-rebuild switch --flake . --impure"; # Update and switch NixOS configuration (impure)
 
         hms = "cd ${flakeDir} && home-manager switch --flake ${flakeDir}#$(hostname)"; # Switch Home Manager configuration
 
