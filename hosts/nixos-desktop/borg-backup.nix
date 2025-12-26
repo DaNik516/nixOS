@@ -84,6 +84,9 @@ in
           "/home/*/.config/obsidian/GPUCache"
           "/home/*/.config/obsidian/Code Cache"
 
+          # NEOVIM PLUGINS (Re-downloadable)
+          "/home/*/.local/share/nvim"
+
           # Others
           "/home/*/.config/Slack/Cache"
           "/home/*/.config/Spotify/PersistentCache"
