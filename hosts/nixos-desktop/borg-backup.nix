@@ -35,7 +35,7 @@ in
 
         # 2. Exclusions
         exclude_patterns = [
-          # 1. STANDARD HEAVY FILES & TRASH
+          # 1. STANDARD HEAVY FILES
           "*.vdi"
           "*.qcow2"
           "*.iso"
@@ -43,19 +43,25 @@ in
           "/home/*/.local/share/Trash"
           "/home/*/.local/share/recent-documents"
 
-          # 2. BROWSER JUNK (Synced)
+          # 2. CLIPBOARD & DOCS (The "Bullshit" you saw)
+          "/home/*/.local/share/klipper" # Clipboard History
+          "/home/*/.local/share/Zeal" # Documentation Sets
+
+          # 3. TELEGRAM JUNK (Keep login, remove emojis)
+          "/home/*/.local/share/TelegramDesktop/tdata/emoji"
+          "/home/*/.local/share/TelegramDesktop/tdata/temp"
+          "/home/*/.local/share/TelegramDesktop/tdata/dumps"
+
+          # 4. BROWSER JUNK (Synced)
           "/home/*/.mozilla"
           "/home/*/.config/google-chrome"
           "/home/*/.config/chromium"
           "/home/*/.config/BraveSoftware"
 
-          # 3. DEVELOPMENT TOOLS JUNK
-          "/home/*/.eclipse" # Eclipse Install Artifacts
-          "/home/*/.vscode" # VS Code Extensions
-          "/home/*/.p2" # Eclipse P2 Agent
-
-          # 4. VS CODE & CURSOR (The "Electron" Spam)
-          # We keep 'User/settings.json', but nuke the heavy caches
+          # 5. DEV TOOLS & EDITORS (VS Code, Cursor, Eclipse)
+          "/home/*/.eclipse"
+          "/home/*/.vscode"
+          "/home/*/.p2"
           "/home/*/.config/Code/CachedData"
           "/home/*/.config/Code/Cache"
           "/home/*/.config/Code/Crashpad"
@@ -75,14 +81,14 @@ in
           "/home/*/.config/Cursor/User/workspaceStorage"
           "/home/*/.config/Cursor/User/History"
 
-          # 5. FLATPAK & SYSTEM JUNK
-          "/home/*/.var/app/*/cache" # Flatpak Caches (Shader/WebKit)
+          # 6. FLATPAK & SYSTEM JUNK
+          "/home/*/.var/app/*/cache" # Flatpak Caches
           "/home/*/.local/share/flatpak" # Flatpak Installs
-          "/home/*/.local/share/nvim" # Neovim (Lazy/Mason)
+          "/home/*/.local/share/nvim" # Neovim
           "/home/*/.local/share/baloo" # Search Index
           "/home/*/.local/state" # Logs
 
-          # 6. PACKAGE MANAGERS
+          # 7. PACKAGE MANAGERS
           "/home/*/.cache"
           "/home/*/.npm"
           "/home/*/.cargo"
@@ -92,7 +98,7 @@ in
           "/home/*/.redhat"
           "/home/*/.sts4"
 
-          # 7. CHAT/MEDIA APP CACHES
+          # 8. CHAT/MEDIA APP CACHES
           "/home/*/.config/vesktop/Cache"
           "/home/*/.config/vesktop/Code Cache"
           "/home/*/.config/vesktop/GPUCache"
@@ -101,7 +107,7 @@ in
           "/home/*/.config/Slack/Cache"
           "/home/*/.config/Spotify/PersistentCache"
 
-          # 8. SYNCED FOLDERS (Git)
+          # 9. SYNCED FOLDERS
           "/home/*/developing-projects"
           "/home/*/dotfiles"
           "/home/*/nixOS"
