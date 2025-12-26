@@ -23,7 +23,7 @@
     ./local-packages.nix
 
     # Secrets Management (not added to GitHub)
-    ./secrets.nix
+    (import /etc/nixos/secrets/secrets.nix)
 
     # Borg Backup Configuration
     ./borg-backup.nix

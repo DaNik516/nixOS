@@ -16,6 +16,3 @@ result-*
 # Ignore Nix flake lock file
 flake.lock
 
-
-# Ignore secrets file
-secrets.nix
