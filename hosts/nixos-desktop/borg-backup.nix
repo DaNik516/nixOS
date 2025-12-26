@@ -78,6 +78,7 @@ in
           "/home/*/.local/share/baloo"
           "/home/*/.local/state"
           "/home/*/.cache"
+          "/home/*/.config/libreoffice/*/cache"
 
           # 7. PACKAGE MANAGERS
           "/home/*/.npm"
@@ -98,6 +99,10 @@ in
           # 9. GENERIC APP CACHES
           "/home/*/.config/obsidian/Cache"
           "/home/*/.config/obsidian/GPUCache"
+          "/home/*/.config/obsidian/Code Cache"
+          "/home/*/.config/obsidian/Dawn*"
+          "/home/*/.config/obsidian/Session Storage"
+
           "/home/*/.config/Slack/Cache"
           "/home/*/.config/Spotify/PersistentCache"
         ];
