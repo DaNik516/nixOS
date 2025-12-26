@@ -35,14 +35,22 @@ in
 
         # 2. Exclusions
         exclude_patterns = [
-          # Standard Heavy Files
+          # 1. Standard Heavy Files
           "*.vdi"
           "*.qcow2"
           "*.iso"
           "/home/*/Downloads"
           "/home/*/.local/share/Trash"
 
-          # CACHE
+          # 2. DEV TOOLS & LANGUAGES (New additions)
+          "/home/*/.vscode/extensions" # Heavy! Re-installs via Sync
+          "/home/*/.vscode/cli"
+          "/home/*/.local/share/zeal" # Docsets (Downloadable)
+          "/home/*/.dotnet" # .NET Debugger/Cache
+          "/home/*/.redhat" # Java/XML Language Server Cache
+          "/home/*/.sts4" # Spring Boot Tooling Cache
+
+          # 3. CACHE & JUNK
           "/home/*/.cache"
           "/home/*/.npm"
           "/home/*/.cargo"
@@ -50,7 +58,7 @@ in
           "/home/*/.gradle"
           "/home/*/.mozilla/firefox/*.default-release/cache2"
 
-          # ELECTRON JUNK
+          # 4. ELECTRON JUNK
           "/home/*/.config/discord/Cache"
           "/home/*/.config/discord/Code Cache"
           "/home/*/.config/Code/Cache"
@@ -58,7 +66,7 @@ in
           "/home/*/.config/Slack/Cache"
           "/home/*/.config/Spotify/PersistentCache"
 
-          # REPOS
+          # 5. REPOS
           "/home/*/developing-projects"
           "/home/*/dotfiles"
           "/home/*/nixOS"
