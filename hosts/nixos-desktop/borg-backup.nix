@@ -43,57 +43,34 @@ in
           "/home/*/.local/share/Trash"
           "/home/*/.local/share/recent-documents"
 
-          # 2. CLIPBOARD & DOCS (The "Bullshit" you saw)
+          # 2. CLIPBOARD & DOCS
           "/home/*/.local/share/klipper" # Clipboard History
           "/home/*/.local/share/Zeal" # Documentation Sets
 
-          # 3. TELEGRAM JUNK (Keep login, remove emojis)
+          # 3. TELEGRAM JUNK (Keep login, remove temp)
           "/home/*/.local/share/TelegramDesktop/tdata/emoji"
           "/home/*/.local/share/TelegramDesktop/tdata/temp"
           "/home/*/.local/share/TelegramDesktop/tdata/dumps"
 
-          # 4. BROWSER JUNK
+          # 4. BROWSERS (Synced)
           "/home/*/.mozilla"
           "/home/*/.config/google-chrome"
           "/home/*/.config/chromium"
           "/home/*/.config/BraveSoftware"
 
-          # 5. CODE EDITORS (The source of your log spam)
+          # 5. DEV TOOLS (SYNCED - NUKE IT ALL)
           "/home/*/.eclipse"
-          "/home/*/.vscode"
           "/home/*/.p2"
-
-          # VS Code & Cursor: Cache, Logs, and Local Storage (Database junk)
-          "/home/*/.config/Code/CachedData"
-          "/home/*/.config/Code/Cache"
-          "/home/*/.config/Code/Code Cache"
-          "/home/*/.config/Code/Crashpad"
-          "/home/*/.config/Code/logs"
-          "/home/*/.config/Code/Service Worker"
-          "/home/*/.config/Code/Local Storage" # <--- NEW: Stops the leveldb spam
-          "/home/*/.config/Code/User/workspaceStorage"
-          "/home/*/.config/Code/User/History"
-          "/home/*/.config/Code/.org.chromium.*" # <--- NEW: Stops temp files
-
-          "/home/*/.config/Cursor/CachedData"
-          "/home/*/.config/Cursor/Cache"
-          "/home/*/.config/Cursor/Code Cache"
-          "/home/*/.config/Cursor/Crashpad"
-          "/home/*/.config/Cursor/logs"
-          "/home/*/.config/Cursor/GPUCache"
-          "/home/*/.config/Cursor/DawnWebGPUCache"
-          "/home/*/.config/Cursor/DawnGraphiteCache"
-          "/home/*/.config/Cursor/Session Storage"
-          "/home/*/.config/Cursor/Local Storage" # <--- NEW
-          "/home/*/.config/Cursor/User/workspaceStorage"
-          "/home/*/.config/Cursor/User/History"
+          "/home/*/.vscode"
+          "/home/*/.config/Code" # <--- REMOVES EVERYTHING (You use Sync)
+          "/home/*/.config/Cursor" # <--- REMOVES EVERYTHING (You use Sync)
 
           # 6. FLATPAK & SYSTEM JUNK
-          "/home/*/.var/app/*/cache" # Flatpak Caches
-          "/home/*/.local/share/flatpak" # Flatpak Installs
-          "/home/*/.local/share/nvim" # Neovim
-          "/home/*/.local/share/baloo" # Search Index
-          "/home/*/.local/state" # Logs
+          "/home/*/.var/app/*/cache"
+          "/home/*/.local/share/flatpak"
+          "/home/*/.local/share/nvim"
+          "/home/*/.local/share/baloo"
+          "/home/*/.local/state"
 
           # 7. PACKAGE MANAGERS
           "/home/*/.cache"
