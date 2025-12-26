@@ -16,10 +16,22 @@
 
 {
   imports = [
+    # Hardware scan (auto-generated)
     ./hardware-configuration.nix
+
+    # Packages specific to this machine
     ./local-packages.nix
+
+    # Secrets Management (not added to GitHub)
     ./secrets.nix
+
+    # Borg Backup Configuration
+    ./borg-backup.nix
+
+    # Flatpak support
     ./flatpak.nix
+
+    # Core imports
     ../../nixos/modules/core.nix
   ];
 

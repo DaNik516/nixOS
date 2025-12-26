@@ -24,6 +24,8 @@
 
     # Flatpak support
     ./flatpak.nix
+
+    # Core imports
     ../../nixos/modules/core.nix
   ];
 
