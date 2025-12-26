@@ -332,6 +332,8 @@ To have a working setup every single variable needs to be defined, otherwise the
    * `gnome` : Whatever to enable gnome or not
 
    * `kde`: Whatever to enable kde or not
+
+   * `cosmic`: Whatever to enable cosmic or not
   
   * `flatpak` : Whatever to enable support for flatpak
   
@@ -414,6 +416,7 @@ To have a working setup every single variable needs to be defined, otherwise the
   hyprland = true;
   gnome = true;
   kde = true;
+  cosmic = true;
 
   # 📦 PACKAGES & TERMINAL
   flatpak = true;

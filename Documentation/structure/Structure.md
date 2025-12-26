@@ -34,6 +34,11 @@ Categories can be navigated with the links below:
 │       ├── git.nix                                # Git credentials & aliases
 │       ├── kitty.nix                              # Terminal settings
 │       │
+│       ├── cosmic/                                # cosmic-specific configuration
+│       │   ├── cosmic-binds.nix                   # cosmic keyboard shortcuts
+│       │   ├── default.nix                        # Cosmic redirector
+│       │   └── cosmic-main.nix                    # Core Gnome rules
+│       │
 │       ├── gnome/                                 # gnome-specific configuration
 │       │   ├── gnome-binds.nix                    # gnome keyboard shortcuts
 │       │   ├── default.nix                        # Gnome redirector
@@ -97,6 +102,7 @@ Categories can be navigated with the links below:
 │       ├── bluetooth.nix                          # Bluetooth logic
 │       ├── boot.nix                               # Bootloader (Systemd-boot)
 │       ├── core.nix                               # Import all nixOS system modules
+│       ├── cosmic.nix                             # System-level cosmic enablement
 │       ├── env.nix                                # Global environment variables
 │       ├── gnome.nix                              # System-level gnome enablement
 │       ├── guest.nix                              # Handle the guest user

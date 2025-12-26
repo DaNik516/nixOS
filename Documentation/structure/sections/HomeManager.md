@@ -147,8 +147,26 @@ Shell configuration.
 * **Function:** Adds Nix-specific aliases (like `hms` for Home Manager Switch) and integrates with an existing `~/.zshrc_custom` file
   * This allow an hybrid setup where one can configure `~/.zshrc_custom` to be valid regardless of os, basically using globally valid aliases and options
 
+## 🪟 Cosmic Sub-modules (`home-manager/modules/cosmic/`)
 
-## GNOME Home Manager Sub-modules (`home-manager/modules/gnome/`)
+
+
+### `cosmic-main.nix`
+This file handles the visual configuration of the cosmic session, including wallpapers, themes, and interface tweaks.
+
+### `default.nix`
+
+This is the module entry point for the cosmic configuration folder. It uses the `imports` list to aggregate the separate configuration files into a single module.
+
+* **General Idea:** It serves as an index, telling Home Manager which files are part of the cosmic setup.
+* **Effect of Changing:** Adding or removing a file path here determines whether that specific configuration file is loaded or ignored by the system. If a file exists but is not listed here, its settings will not be applied.
+
+
+### `cosmic-binds.nix`
+This file manages custom keyboard shortcuts for cosmic.
+
+
+## 🪟 GNOME Home Manager Sub-modules (`home-manager/modules/gnome/`)
 
 ### `default.nix`
 
@@ -157,7 +175,7 @@ This is the module entry point for the GNOME configuration folder. It uses the `
 * **General Idea:** It serves as an index, telling Home Manager which files are part of the GNOME setup.
 * **Effect of Changing:** Adding or removing a file path here determines whether that specific configuration file is loaded or ignored by the system. If a file exists but is not listed here, its settings will not be applied.
 
-### `main.nix`
+### `gnome-main.nix`
 This file handles the visual configuration of the GNOME session, including wallpapers, themes, and interface tweaks.
 
 * **Wallpaper:** As far as i know gnome does not allow to use nix os to define different wallpapers based on different monitor. A tool called `hydrapaper` should allow to do so. It is installed as a package in case it is needed 

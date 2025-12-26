@@ -23,6 +23,17 @@ Configures the bootloader (Systemd-boot). It manages EFI variables and detects o
 Import all the nixos modules. When a module is added in `nixos/modules/` it is necessary to add it here to allow nixos to see it
 - Desktop environment should not be added here because they are automatically enabled/disabled depending on the user choices in `variables.nix`
 
+### `cosmic.nix`
+This file configures the system-level components required to run the cosmic Desktop Environment.
+
+* **Display Manager Strategy:** It enables the cosmic Desktop Manager but explicitly **does not enable cosmic-greeter**. This is designed to coexist with the existing **SDDM** setup, allowing SDDM to launch GNOME sessions without conflict.
+* **Guest Security:** It implements a "Lockout" mechanism for the Guest user.
+* It installs an auto-start script that checks if the current user is `guest`.
+* If a guest tries to log into GNOME, it triggers a **Zenity** warning ("Access Denied") and immediately kills the session, enforcing the restriction that guests may only use XFCE.
+
+* **Debloat:** It excludes standard "bloatware" packages
+
+
 
 ## `env.nix`
 Sets system-wide environment variables and default application associations.
