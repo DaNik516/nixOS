@@ -35,32 +35,32 @@ in
 
         # 2. Exclusions
         exclude_patterns = [
-          # 1. Standard Heavy Files
+          # 1. STANDARD HEAVY FILES & TRASH
           "*.vdi"
           "*.qcow2"
           "*.iso"
-          "/home/*/Downloads" # Download folder
-          "/home/*/.local/share/Trash" # Trash bin
-          "/home/*/.local/share/recent-documents" # Recent file history
+          "/home/*/Downloads"
+          "/home/*/.local/share/Trash"
+          "/home/*/.local/share/recent-documents"
 
-          # 2. ENTIRE FOLDERS YOU SYNC ELSEWHERE
-          "/home/*/.mozilla" # Firefox Sync
-          "/home/*/.config/google-chrome" # Google Chrome Sync
-          "/home/*/.config/chromium" # Chromium Sync
-          "/home/*/.vscode" # GitHub Settings Sync
-          "/home/*/.ssh" # Password Manager
-          "/home/*/developing-projects" # Git
-          "/home/*/dotfiles" # Git
-          "/home/*/nixOS" # Git
-          "/home/*/progettoFDI" # Git
-          "/home/*/tools" # Symlinks
+          # 2. ENTIRE FOLDERS SYNCED ELSEWHERE
+          "/home/*/.mozilla" # Firefox (Synced via Firefox Account)
+          "/home/*/.config/google-chrome" # Chrome (Synced via Google)
+          "/home/*/.config/chromium" # Chromium (Synced via Google)
+          "/home/*/.vscode" # VS Code (Synced via GitHub)
+          "/home/*/.ssh" # SSH Keys (Stored in Password Manager)
+          "/home/*/developing-projects" # Git Repos
+          "/home/*/dotfiles" # Git Repos
+          "/home/*/nixOS" # Git Repos
+          "/home/*/progettoFDI" # Git Repos
+          "/home/*/tools" # Symlinks to Nix Store
 
           # 3. SYSTEM & APP INDEXES (Regenerable)
           "/home/*/.local/share/baloo" # KDE File Search Index
-          "/home/*/.local/state" # Transient logs/state (Wireplumber, nvim logs)
+          "/home/*/.local/state" # Transient logs/state
           "/home/*/.local/share/Zeal" # Docsets
 
-          # 4. CACHE & JUNK
+          # 4. DEV & PACKAGE MANAGER CACHES
           "/home/*/.cache"
           "/home/*/.npm"
           "/home/*/.cargo"
@@ -70,9 +70,21 @@ in
           "/home/*/.redhat"
           "/home/*/.sts4"
 
-          # 5. ELECTRON JUNK (Specifics)
+          # 5. ELECTRON APP CACHES (Specifics)
+          # Discord / Vesktop
           "/home/*/.config/discord/Cache"
           "/home/*/.config/discord/Code Cache"
+          "/home/*/.config/vesktop/Cache"
+          "/home/*/.config/vesktop/Code Cache"
+          "/home/*/.config/vesktop/GPUCache"
+          "/home/*/.config/vesktop/Session Storage"
+
+          # Obsidian
+          "/home/*/.config/obsidian/Cache"
+          "/home/*/.config/obsidian/GPUCache"
+          "/home/*/.config/obsidian/Code Cache"
+
+          # Others
           "/home/*/.config/Slack/Cache"
           "/home/*/.config/Spotify/PersistentCache"
         ];
