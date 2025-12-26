@@ -39,28 +39,38 @@ in
           "*.vdi"
           "*.qcow2"
           "*.iso"
-          "/home/*/Downloads"
-          "/home/*/.local/share/Trash"
+          "/home/*/Downloads" # Download folder
+          "/home/*/.local/share/Trash" # Trash bin
+          "/home/*/.local/share/recent-documents" # Recent file history
 
-          # 2. ENTIRE FOLDERS YOU SYNC ELSEWHERE (The "Nuke" List)
-          "/home/*/.mozilla" # Firefox (firefox Sync)
-          "/home/*/.vscode" # VS Code (github sync)
-          "/home/*/.ssh" # SSH Keys (Proton pass sync)
-          "/home/*/developing-projects" # Git Repos
-          "/home/*/dotfiles" # Git Repos
-          "/home/*/nixOS" # Git Repos
-          "/home/*/progettoFDI" # Git Repos
+          # 2. ENTIRE FOLDERS YOU SYNC ELSEWHERE
+          "/home/*/.mozilla" # Firefox Sync
+          "/home/*/.config/google-chrome" # Google Chrome Sync
+          "/home/*/.config/chromium" # Chromium Sync
+          "/home/*/.vscode" # GitHub Settings Sync
+          "/home/*/.ssh" # Password Manager
+          "/home/*/developing-projects" # Git
+          "/home/*/dotfiles" # Git
+          "/home/*/nixOS" # Git
+          "/home/*/progettoFDI" # Git
           "/home/*/tools" # Symlinks
 
-          # 3. CACHE & JUNK (For apps you DO keep)
+          # 3. SYSTEM & APP INDEXES (Regenerable)
+          "/home/*/.local/share/baloo" # KDE File Search Index
+          "/home/*/.local/state" # Transient logs/state (Wireplumber, nvim logs)
+          "/home/*/.local/share/Zeal" # Docsets
+
+          # 4. CACHE & JUNK
           "/home/*/.cache"
           "/home/*/.npm"
           "/home/*/.cargo"
           "/home/*/.m2"
           "/home/*/.gradle"
-          "/home/*/.local/share/Zeal" # Docsets are downloadable
+          "/home/*/.dotnet"
+          "/home/*/.redhat"
+          "/home/*/.sts4"
 
-          # 4. ELECTRON JUNK (For apps not fully excluded)
+          # 5. ELECTRON JUNK (Specifics)
           "/home/*/.config/discord/Cache"
           "/home/*/.config/discord/Code Cache"
           "/home/*/.config/Slack/Cache"
