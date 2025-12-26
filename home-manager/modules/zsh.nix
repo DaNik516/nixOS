@@ -19,11 +19,18 @@
         flakeDir = "~/nixOS";
       in
       {
+
         # Nix specific
-        sw = "cd ${flakeDir} &&  nh os switch ${flakeDir}"; # Switch NixOS configuration
-        upd = "cd ${flakeDir} && nh os switch --update ${flakeDir}"; # Update and switch NixOS configuration
+        swpure = "cd ${flakeDir} &&  nh os switch ${flakeDir}"; # Switch NixOS configuration (pure)
+        sw = "cd ${flakeDir} &&  nh os switch ${flakeDir} -- --impure"; # Switch NixOS configuration (impure)
+
+        updpure = "cd ${flakeDir} && nh os switch --update ${flakeDir}"; # Update and switch NixOS configuration (pure)
+        upd = "cd ${flakeDir} && nh os switch --update ${flakeDir} -- --impure"; # Update and switch NixOS configuration (impure)
+
         hms = "cd ${flakeDir} && home-manager switch --flake ${flakeDir}#$(hostname)"; # Switch Home Manager configuration
+
         pkgs = "nvim ${flakeDir}/home-manager/home-packages.nix"; # Edit Home Manager packages
+
         fmt-dry = "nix fmt -- --check"; # Check formatting without making changes (list files that need formatting)
         fmt = "cd ${flakeDir} &&  nix fmt -- **/*.nix"; # Format Nix files using nixfmt (a regular nix fmt hangs on zed theme)
 
