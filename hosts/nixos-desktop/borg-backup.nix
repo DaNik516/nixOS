@@ -52,32 +52,39 @@ in
           "/home/*/.local/share/TelegramDesktop/tdata/temp"
           "/home/*/.local/share/TelegramDesktop/tdata/dumps"
 
-          # 4. BROWSER JUNK (Synced)
+          # 4. BROWSER JUNK
           "/home/*/.mozilla"
           "/home/*/.config/google-chrome"
           "/home/*/.config/chromium"
           "/home/*/.config/BraveSoftware"
 
-          # 5. DEV TOOLS & EDITORS (VS Code, Cursor, Eclipse)
+          # 5. CODE EDITORS (The source of your log spam)
           "/home/*/.eclipse"
           "/home/*/.vscode"
           "/home/*/.p2"
+
+          # VS Code & Cursor: Cache, Logs, and Local Storage (Database junk)
           "/home/*/.config/Code/CachedData"
           "/home/*/.config/Code/Cache"
+          "/home/*/.config/Code/Code Cache"
           "/home/*/.config/Code/Crashpad"
           "/home/*/.config/Code/logs"
           "/home/*/.config/Code/Service Worker"
+          "/home/*/.config/Code/Local Storage" # <--- NEW: Stops the leveldb spam
           "/home/*/.config/Code/User/workspaceStorage"
           "/home/*/.config/Code/User/History"
+          "/home/*/.config/Code/.org.chromium.*" # <--- NEW: Stops temp files
 
           "/home/*/.config/Cursor/CachedData"
           "/home/*/.config/Cursor/Cache"
+          "/home/*/.config/Cursor/Code Cache"
           "/home/*/.config/Cursor/Crashpad"
           "/home/*/.config/Cursor/logs"
           "/home/*/.config/Cursor/GPUCache"
           "/home/*/.config/Cursor/DawnWebGPUCache"
           "/home/*/.config/Cursor/DawnGraphiteCache"
           "/home/*/.config/Cursor/Session Storage"
+          "/home/*/.config/Cursor/Local Storage" # <--- NEW
           "/home/*/.config/Cursor/User/workspaceStorage"
           "/home/*/.config/Cursor/User/History"
 
@@ -98,7 +105,14 @@ in
           "/home/*/.redhat"
           "/home/*/.sts4"
 
-          # 8. CHAT/MEDIA APP CACHES
+          # 8. SYNCED FOLDERS
+          "/home/*/developing-projects"
+          "/home/*/dotfiles"
+          "/home/*/nixOS"
+          "/home/*/progettoFDI"
+          "/home/*/tools"
+
+          # 9. APP CACHES
           "/home/*/.config/vesktop/Cache"
           "/home/*/.config/vesktop/Code Cache"
           "/home/*/.config/vesktop/GPUCache"
@@ -106,13 +120,6 @@ in
           "/home/*/.config/obsidian/GPUCache"
           "/home/*/.config/Slack/Cache"
           "/home/*/.config/Spotify/PersistentCache"
-
-          # 9. SYNCED FOLDERS
-          "/home/*/developing-projects"
-          "/home/*/dotfiles"
-          "/home/*/nixOS"
-          "/home/*/progettoFDI"
-          "/home/*/tools"
         ];
 
         # 3. Storage & Encryption
