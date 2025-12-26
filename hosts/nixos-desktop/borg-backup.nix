@@ -43,24 +43,46 @@ in
           "/home/*/.local/share/Trash"
           "/home/*/.local/share/recent-documents"
 
-          # 2. ENTIRE FOLDERS SYNCED ELSEWHERE
-          "/home/*/.mozilla" # Firefox (Synced via Firefox Account)
-          "/home/*/.config/google-chrome" # Chrome (Synced via Google)
-          "/home/*/.config/chromium" # Chromium (Synced via Google)
-          "/home/*/.vscode" # VS Code (Synced via GitHub)
-          "/home/*/.ssh" # SSH Keys (Stored in Password Manager)
-          "/home/*/developing-projects" # Git Repos
-          "/home/*/dotfiles" # Git Repos
-          "/home/*/nixOS" # Git Repos
-          "/home/*/progettoFDI" # Git Repos
-          "/home/*/tools" # Symlinks to Nix Store
+          # 2. BROWSER JUNK (Synced)
+          "/home/*/.mozilla"
+          "/home/*/.config/google-chrome"
+          "/home/*/.config/chromium"
+          "/home/*/.config/BraveSoftware"
 
-          # 3. SYSTEM & APP INDEXES (Regenerable)
-          "/home/*/.local/share/baloo" # KDE File Search Index
-          "/home/*/.local/state" # Transient logs/state
-          "/home/*/.local/share/Zeal" # Docsets
+          # 3. DEVELOPMENT TOOLS JUNK
+          "/home/*/.eclipse" # Eclipse Install Artifacts
+          "/home/*/.vscode" # VS Code Extensions
+          "/home/*/.p2" # Eclipse P2 Agent
 
-          # 4. DEV & PACKAGE MANAGER CACHES
+          # 4. VS CODE & CURSOR (The "Electron" Spam)
+          # We keep 'User/settings.json', but nuke the heavy caches
+          "/home/*/.config/Code/CachedData"
+          "/home/*/.config/Code/Cache"
+          "/home/*/.config/Code/Crashpad"
+          "/home/*/.config/Code/logs"
+          "/home/*/.config/Code/Service Worker"
+          "/home/*/.config/Code/User/workspaceStorage"
+          "/home/*/.config/Code/User/History"
+
+          "/home/*/.config/Cursor/CachedData"
+          "/home/*/.config/Cursor/Cache"
+          "/home/*/.config/Cursor/Crashpad"
+          "/home/*/.config/Cursor/logs"
+          "/home/*/.config/Cursor/GPUCache"
+          "/home/*/.config/Cursor/DawnWebGPUCache"
+          "/home/*/.config/Cursor/DawnGraphiteCache"
+          "/home/*/.config/Cursor/Session Storage"
+          "/home/*/.config/Cursor/User/workspaceStorage"
+          "/home/*/.config/Cursor/User/History"
+
+          # 5. FLATPAK & SYSTEM JUNK
+          "/home/*/.var/app/*/cache" # Flatpak Caches (Shader/WebKit)
+          "/home/*/.local/share/flatpak" # Flatpak Installs
+          "/home/*/.local/share/nvim" # Neovim (Lazy/Mason)
+          "/home/*/.local/share/baloo" # Search Index
+          "/home/*/.local/state" # Logs
+
+          # 6. PACKAGE MANAGERS
           "/home/*/.cache"
           "/home/*/.npm"
           "/home/*/.cargo"
@@ -70,26 +92,21 @@ in
           "/home/*/.redhat"
           "/home/*/.sts4"
 
-          # 5. ELECTRON APP CACHES (Specifics)
-          # Discord / Vesktop
-          "/home/*/.config/discord/Cache"
-          "/home/*/.config/discord/Code Cache"
+          # 7. CHAT/MEDIA APP CACHES
           "/home/*/.config/vesktop/Cache"
           "/home/*/.config/vesktop/Code Cache"
           "/home/*/.config/vesktop/GPUCache"
-          "/home/*/.config/vesktop/Session Storage"
-
-          # Obsidian
           "/home/*/.config/obsidian/Cache"
           "/home/*/.config/obsidian/GPUCache"
-          "/home/*/.config/obsidian/Code Cache"
-
-          # NEOVIM PLUGINS (Re-downloadable)
-          "/home/*/.local/share/nvim"
-
-          # Others
           "/home/*/.config/Slack/Cache"
           "/home/*/.config/Spotify/PersistentCache"
+
+          # 8. SYNCED FOLDERS (Git)
+          "/home/*/developing-projects"
+          "/home/*/dotfiles"
+          "/home/*/nixOS"
+          "/home/*/progettoFDI"
+          "/home/*/tools"
         ];
 
         # 3. Storage & Encryption
