@@ -42,36 +42,29 @@ in
           "/home/*/Downloads"
           "/home/*/.local/share/Trash"
 
-          # 2. DEV TOOLS & LANGUAGES
-          "/home/*/.vscode/extensions" # Heavy! Re-installs via Sync
-          "/home/*/.vscode/cli"
-          "/home/*/.local/share/Zeal"
-          "/home/*/.dotnet"
-          "/home/*/.redhat"
-          "/home/*/.sts4"
+          # 2. ENTIRE FOLDERS YOU SYNC ELSEWHERE (The "Nuke" List)
+          "/home/*/.mozilla" # Firefox (firefox Sync)
+          "/home/*/.vscode" # VS Code (github sync)
+          "/home/*/.ssh" # SSH Keys (Proton pass sync)
+          "/home/*/developing-projects" # Git Repos
+          "/home/*/dotfiles" # Git Repos
+          "/home/*/nixOS" # Git Repos
+          "/home/*/progettoFDI" # Git Repos
+          "/home/*/tools" # Symlinks
 
-          # 3. CACHE & JUNK
+          # 3. CACHE & JUNK (For apps you DO keep)
           "/home/*/.cache"
           "/home/*/.npm"
           "/home/*/.cargo"
           "/home/*/.m2"
           "/home/*/.gradle"
-          "/home/*/.mozilla/firefox/*.default-release/cache2"
+          "/home/*/.local/share/Zeal" # Docsets are downloadable
 
-          # 4. ELECTRON JUNK
+          # 4. ELECTRON JUNK (For apps not fully excluded)
           "/home/*/.config/discord/Cache"
           "/home/*/.config/discord/Code Cache"
-          "/home/*/.config/Code/Cache"
-          "/home/*/.config/Code/CachedData"
           "/home/*/.config/Slack/Cache"
           "/home/*/.config/Spotify/PersistentCache"
-
-          # 5. REPOS
-          "/home/*/developing-projects"
-          "/home/*/dotfiles"
-          "/home/*/nixOS"
-          "/home/*/progettoFDI"
-          "/home/*/tools"
         ];
 
         # 3. Storage & Encryption
