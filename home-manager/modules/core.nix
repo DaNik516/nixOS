@@ -3,7 +3,8 @@
     # ---------------------------------------------------------
     # 👤 USER CORE
     # ---------------------------------------------------------
-    # ❌ DO NOT import ./hyprland, ./gnome, or ./kde here (they are managed based on flake.nix)
+    # ❌ DO NOT import desktop environments or window managers here
+    # (they are managed based on flake.nix)
 
     ./alacritty.nix
     ./bat.nix

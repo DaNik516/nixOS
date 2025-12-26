@@ -84,9 +84,10 @@ Categories can be navigated with the links below:
 │
 ├── hosts/                                         # 🖥️ Host-specific overrides
 │   │
-│   └── nixos-desktop/                             # Main Workstation
+│   └── <hostname>/                                # Contains hosts-specifics aspects
 │       ├── configuration.nix                      # System-level hardware tweaks
 │       ├── flatpak.nix                            # Applications installed through flatpak
+│       ├── hardware-configuration.nix             # Host-specific hardware configuration
 │       ├── local-packages.nix                     # Hosts-specific packages
 │       └── variables.nix                          # Host-specific variables
 │
@@ -97,15 +98,18 @@ Categories can be navigated with the links below:
 │       ├── boot.nix                               # Bootloader (Systemd-boot)
 │       ├── core.nix                               # Import all nixOS system modules
 │       ├── env.nix                                # Global environment variables
+│       ├── gnome.nix                              # System-level gnome enablement
+│       ├── guest.nix                              # Handle the guest user
 │       ├── home-manager.nix                       # HM integration hooks
 │       ├── hyprland.nix                           # System-level Hyprland enablement
 │       ├── KDE.nix                                # System-level KDE enablement
-│       ├── guest.nix                              # Handle the guest user
 │       ├── kernel.nix                             # Kernel parameters
 │       ├── mime.nix                               # Default app associations
 │       ├── net.nix                                # NetworkManager & Hostname
 │       ├── nh.nix                                 # Nix Helper tool config
 │       ├── nix.nix                                # Nix Daemon settings
+│       ├── sddm.nix                               # Login manager
+│       ├── tailscale.nix                          # Manage tailscale service
 │       ├── timezone.nix                           # Locale & Time settings
 │       ├── user.nix                               # User accounts & groups
 │       └── zram.nix                               # Memory optimization

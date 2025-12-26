@@ -31,6 +31,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.home-manager.follows = "home-manager";
     };
+
+    nixos-cosmic.url = "github:lilyinstarlight/nixos-cosmic";
   };
 
   outputs =
@@ -39,6 +41,7 @@
       nixpkgs,
       nixpkgs-unstable,
       home-manager,
+      nixos-cosmic,
       ...
     }@inputs:
     let
@@ -75,6 +78,7 @@
               hyprland
               gnome
               kde
+              cosmic
               flatpak
               term
               base16Theme
@@ -98,6 +102,7 @@
             ./hosts/${hostname}/configuration.nix
             inputs.catppuccin.nixosModules.catppuccin
             inputs.nix-flatpak.nixosModules.nix-flatpak
+            inputs.nixos-cosmic.nixosModules.default
 
             {
               nixpkgs.pkgs = import nixpkgs {
@@ -105,11 +110,16 @@
                 config.allowUnfree = true;
               };
               time.timeZone = hostVars.timeZone;
+              nix.settings = {
+                substituters = [ "https://cosmic.cachix.org" ];
+                trusted-public-keys = [ "cosmic.cachix.org-1:Dya9IyXD4xdBehWjrkPv6rtxpmMdRel02smYzA85dPE=" ];
+              };
             }
           ]
           ++ (nixpkgs.lib.optional (hostVars.hyprland or false) ./nixos/modules/hyprland.nix)
           ++ (nixpkgs.lib.optional (hostVars.gnome or false) ./nixos/modules/gnome.nix)
-          ++ (nixpkgs.lib.optional (hostVars.kde or false) ./nixos/modules/kde.nix);
+          ++ (nixpkgs.lib.optional (hostVars.kde or false) ./nixos/modules/kde.nix)
+          ++ (nixpkgs.lib.optional (hostVars.cosmic or false) ./nixos/modules/cosmic.nix);
         };
 
       # 🏠 HOME BUILDER
@@ -140,6 +150,7 @@
               hyprland
               gnome
               kde
+              cosmic
               term
               base16Theme
               polarity
@@ -168,7 +179,8 @@
             ./home-manager/modules/swaync
           ])
           ++ (nixpkgs.lib.optional (hostVars.gnome or false) ./home-manager/modules/gnome)
-          ++ (nixpkgs.lib.optional (hostVars.kde or false) ./home-manager/modules/kde);
+          ++ (nixpkgs.lib.optional (hostVars.kde or false) ./home-manager/modules/kde)
+          ++ (nixpkgs.lib.optional (hostVars.cosmic or false) ./home-manager/modules/cosmic);
         };
 
     in

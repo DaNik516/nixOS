@@ -42,12 +42,6 @@ This file configures the system-level components required to run the GNOME Deskt
 * **Debloat:** It excludes standard "bloatware" packages like Epiphany (browser), Geary (mail)
 * **Conflict Resolution:** It explicitly forces the SSH password prompt tool to use KDE's `ksshaskpass` (`lib.mkForce`) to prevent build errors caused by GNOME attempting to install its own conflicting `seahorse` agent.
 
-## `home-manager.nix`
-Hooks Home Manager into the NixOS rebuild process, allowing `nixos-rebuild` to manage home configurations
-
-## `hyprland.nix`
-The system-side enabler. It installs the `Hyprland` binary, configures the session entry for the Display Manager, and enables XWayland support.
-
 ## `guest.nix`
 Control the behavior of the guest account.
 - Fixed uid (2000)
@@ -56,6 +50,13 @@ Control the behavior of the guest account.
 - create guest account
 - allow login with no password while in sddm
 - setup xfce session
+
+## `home-manager.nix`
+Hooks Home Manager into the NixOS rebuild process, allowing `nixos-rebuild` to manage home configurations
+
+## `hyprland.nix`
+The system-side enabler. It installs the `Hyprland` binary, configures the session entry for the Display Manager, and enables XWayland support.
+
 
 ## `kernel.nix`
 Sets kernel parameters and loads specific kernel modules required for your hardware support.
@@ -78,6 +79,10 @@ Configuration for the Simple Desktop Display Manager (Login Screen).
 * **Theming:** Uses the official `sddm-astronaut` from official nix packages
 * **Security:** Disables `autoLogin`, ensuring the login screen is always presented on boot.
 * **Default session:** Automatically set based on which desktop environment is enabled
+
+## `tailscale.nix`
+Manage tailscale service
+
 
 ## `timezone.nix`
 Sets the system time zone and locale (language, currency formats) settings.

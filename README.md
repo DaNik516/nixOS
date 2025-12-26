@@ -278,7 +278,7 @@ If you intend for your computer to **not** be named `nixos-desktop`, create a ne
 
 ```bash
 cd ~/nixOS/hosts
-cp -r nixos-desktop <your_hostname>
+cp -r template-host <your_hostname>
 cd <your_hostname>
 ```
 

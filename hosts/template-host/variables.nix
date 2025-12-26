@@ -3,7 +3,7 @@
   # 🖥️ HOST VARIABLES
   # ---------------------------------------------------------------
 
-  hostname = "nixos-desktop";
+  hostname = "template-host";
   system = "x86_64-linux";
 
   # ⚙️ VERSIONS
@@ -14,19 +14,19 @@
   homeStateVersion = "25.11";
 
   # 👤 USER IDENTITY
-  user = "krit";
-  gitUserName = "nicolkrit999";
-  gitUserEmail = "githubgitlabmain.hu5b7@passfwd.com";
+  user = "";
+  gitUserName = "";
+  gitUserEmail = "";
 
   # 🖥️ DESKTOP ENVIRONMENT
   hyprland = true;
-  gnome = true;
-  kde = true;
+  gnome = false;
+  kde = false;
   cosmic = false;
 
   # 📦 PACKAGES & TERMINAL
-  flatpak = true;
-  term = "kitty";
+  flatpak = false;
+  term = "alacritty";
 
   # 🎨 THEMING
   base16Theme = "nord";
@@ -38,21 +38,18 @@
   # ⚙️ SYSTEM SETTINGS
   timeZone = "Europe/Zurich";
   weather = "Lugano";
-  keyboardLayout = "us,ch,de,fr,it";
-  keyboardVariant = "intl,,,,";
+  keyboardLayout = "us";
+  keyboardVariant = "intl";
 
   screenshots = "$HOME/Pictures/screenshots";
 
   # 🛡️ SECURITY & NETWORKING
-  tailscale = true;
-  guest = true;
+  tailscale = false;
+  guest = false;
   zramPercent = 25;
 
   # 🖼️ MONITORS & WALLPAPERS
   monitors = [
-    "DP-1,3840x2160@240,1440x560,1.5"
-    "DP-2,3840x2160@144,0x0,1.5,transform,1"
-    "HDMI-A-1,disable"
   ];
 
   wallpapers = [

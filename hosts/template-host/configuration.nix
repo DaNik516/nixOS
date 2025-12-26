@@ -16,16 +16,18 @@
 
 {
   imports = [
+    # Hardware scan (auto-generated)
     ./hardware-configuration.nix
+
+    # Packages specific to this machine
     ./local-packages.nix
+
+    # Flatpak support
     ./flatpak.nix
     ../../nixos/modules/core.nix
   ];
 
-  # ---------------------------------------------------------
-  # ⚙️ GRAPHICS & FONTS
-  # ---------------------------------------------------------
-  hardware.graphics.enable = true;
+  hardware.graphics.enable = true; # Keep enabled to avoid terminal crash when disabling certain de
 
   fonts.packages = with pkgs; [
     nerd-fonts.jetbrains-mono
@@ -34,11 +36,9 @@
     noto-fonts-color-emoji
     noto-fonts-cjk-sans
   ];
+
   fonts.fontconfig.enable = true;
 
-  # ---------------------------------------------------------
-  # 📦 SYSTEM PACKAGES
-  # ---------------------------------------------------------
   environment.systemPackages = with pkgs; [
     kitty
     alacritty
@@ -52,55 +52,47 @@
     glib
     gsettings-desktop-schemas
     gtk3
-    libsForQt5.qt5.qtwayland
-    kdePackages.qtwayland
+    libsForQt5.qt5.qtwayland # Qt5 Wayland platform plugin
+    kdePackages.qtwayland # Qt6 Wayland platform plugin
+
   ];
 
   programs.dconf.enable = true;
-  programs.zsh.enable = true; # Required for user shell
 
   # ---------------------------------------------------------
-  # 🖥️ HOST IDENTITY & NETWORKING
+  # 🖥️ HOST IDENTITY
   # ---------------------------------------------------------
+  # Dynamically sets the hostname passed from flake.nix
   networking.hostName = hostname;
+
+  # Enable networking
   networking.networkmanager.enable = true;
 
   # ---------------------------------------------------------
-  # 🛠️ NIX SETTINGS (CACHE & FLAKES)
+  # ⚔️ STABILITY FIX: Force 'Switch User' to act as 'Log Out'
   # ---------------------------------------------------------
-  nix.settings = {
-    experimental-features = [
-      "nix-command"
-      "flakes"
-    ];
-
-    # ⚠️ CRITICAL: Must be INSIDE nix.settings to work
-    trusted-users = [
-      "root"
-      "@wheel"
-    ];
-
-    # ⚠️ CRITICAL: Use binary cache to avoid compiling from source
-    substituters = [ "https://cosmic.cachix.org" ];
-    trusted-public-keys = [ "cosmic.cachix.org-1:Dya9IyXD4xdBehWjrkPv6rtxpmMdRel02smYzA85dPE=" ];
-  };
-
-  # ---------------------------------------------------------
-  # ⚔️ SYSTEM TWEAKS
-  # ---------------------------------------------------------
+  # This was done mainly to help the guest user to be kicked out from unauthorized sessions
   systemd.tmpfiles.rules = [
     "f /etc/systemd/logind.conf.d/10-logout-override.conf 0644 root root - [Login]\nKillUserProcesses=yes\nIdleAction=none\n"
   ];
 
+  # ---------------------------------------------------------
+  # ⌨️ KEYBOARD LAYOUT (Global Logic)
+  # ---------------------------------------------------------
+  # Applies the layout defined in flake.nix to X11, Wayland, and Console.
+  # This ensures that all the desktop environments and TTYs use the same layout.
   services.xserver.xkb = {
     layout = keyboardLayout;
     variant = keyboardVariant;
   };
+
+  # Forces the text console (TTY) to look at the Xserver settings above.
   console.useXkbConfig = true;
 
   # ---------------------------------------------------------
   # 👤 USER CONFIGURATION
   # ---------------------------------------------------------
+  # Defines the user dynamically based on flake.nix input
   users.users.${user} = {
     isNormalUser = true;
     description = "Primary user";
@@ -112,14 +104,18 @@
       "video"
       "audio"
     ];
-    shell = pkgs.zsh;
+    shell = pkgs.zsh; # Ensure zsh is installed in system packages
   };
 
-  # ---------------------------------------------------------
-  # 🌐 BROWSER
-  # ---------------------------------------------------------
+  # Nix Settings (Flakes & Garbage Collection)
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
+
   programs.chromium = {
     enable = true;
+
     extraOpts = {
       "ShowHomeButton" = true;
       "HomepageLocation" = "https://www.youtube.com";
@@ -129,5 +125,6 @@
     };
   };
 
+  # Defines the state version dynamically based on flake.nix input
   system.stateVersion = stateVersion;
 }
