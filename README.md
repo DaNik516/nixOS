@@ -4,15 +4,20 @@
 - [❄️ Personal NixOS Config](#️-personal-nixos-config)
   - [✨ Features](#-features)
     - [🖥️ Adaptive Host Support:](#️-adaptive-host-support)
-    - [📦 Package version](#-package-version)
+    - [📦 Package version and flatpak](#-package-version-and-flatpak)
     - [❄️ Hybrid (declarative + non declarative for some modules)](#️-hybrid-declarative--non-declarative-for-some-modules)
     - [🎨 Theming](#-theming)
+    - [🖌️ Wallpaper(s)](#️-wallpapers)
+      - [kde-main.nix](#kde-mainnix)
+      - [gnome-main.nix](#gnome-mainnix)
     - [🪟 Multiple Desktop Environments](#-multiple-desktop-environments)
+      - [✅ The Safe Way (Prevent Lockouts)](#-the-safe-way-prevent-lockouts)
+      - [🚨 Emergency Recovery (Stuck in TTY)](#-emergency-recovery-stuck-in-tty)
+      - [🛠️ Troubleshooting](#️-troubleshooting)
     - [👤 Ephemeral Guest User](#-ephemeral-guest-user)
     - [🏠 Home Manager Integration](#-home-manager-integration)
     - [🧇 Tmux](#-tmux)
-    - [🌟 Zsh + Starship Hybrid shell setup (local and custom) with starship.](#-zsh--starship-hybrid-shell-setup-local-and-custom-with-starship)
-    - [🔢 Customizable versions](#-customizable-versions)
+    - [🌟 Zsh + Starship](#-zsh--starship)
   - [🚀 Installation](#-installation)
     - [0. Prerequisites](#0-prerequisites)
     - [1. Install NixOS](#1-install-nixos)
@@ -24,16 +29,15 @@
       - [An hosts variable config example:](#an-hosts-variable-config-example)
       - [`local-packages.nix`](#local-packagesnix)
       - [`flatpak.nix`](#flatpaknix)
-    - [6. (kinda optional) Configure hyprland workspaces `hyprland/main.nix`](#6-kinda-optional-configure-hyprland-workspaces-hyprlandmainnix)
-    - [7. (kinda optional) KDE `kde/inputs.nix` configuration](#7-kinda-optional-kde-kdeinputsnix-configuration)
-      - [How to find your Hardware IDs](#how-to-find-your-hardware-ids)
-      - [Where to put the data](#where-to-put-the-data)
-    - [8. (optional) Other files that may require manual attention](#8-optional-other-files-that-may-require-manual-attention)
-      - [~/nixOS/home-manager/modules/waybar](#nixoshome-managermoduleswaybar)
+      - [`modules.nix`](#modulesnix)
+      - [`home.nix`](#homenix)
+    - [6. (Optional) Customize the host-specific `modules.nix`](#6-optional-customize-the-host-specific-modulesnix)
+      - [`modules.nix` Example](#modulesnix-example)
+    - [7. (optional) Other files that may require manual attention](#7-optional-other-files-that-may-require-manual-attention)
       - [~/nixOS/home-manager/modules/firefox.nix and ~/nixOS/home-manager/modules/chromium.nix](#nixoshome-managermodulesfirefoxnix-and-nixoshome-managermoduleschromiumnix)
-      - [~/nixOS/home-manager/home.nix/](#nixoshome-managerhomenix)
       - [~/nixOS/home-manager/modules/zathura.nix/](#nixoshome-managermoduleszathuranix)
-      - [~/nixOS/home-manager/modules/starship.nix/](#nixoshome-managermodulesstarshipnix)
+    - [8. (Optional) Customize the host-specific `home.nix`](#8-optional-customize-the-host-specific-homenix)
+      - [`home.nix` Example](#homenix-example)
     - [9. First Time Build](#9-first-time-build)
   - [🔄 Daily Usage](#-daily-usage)
   - [❓ Troubleshooting](#-troubleshooting)
@@ -52,6 +56,7 @@
     - [XFCE](#xfce)
   - [Other resources](#other-resources)
     - [Structure](#structure)
+    - [In-depth-files-expl](#in-depth-files-expl)
     - [Issues](#issues)
     - [Ideas](#ideas)
 
@@ -59,91 +64,233 @@
 ## ✨ Features
 
 ### 🖥️ Adaptive Host Support: ### 
-Define unique hardware parameters (monitors, keyboard layout, idle timers, battery handling, wallpapers, etc) per machine while keeping the core environment identical. For reference look point ([5. Configure the host folder](#5-configure-the-hosts-folder))
+Define unique hardware parameters (monitors, theming, keyboard layout,  wallpapers, etc) per machine while keeping the core environment identical. All these customized options can be changed in the host-specific `variables.nix`
+- This allow to have a tailored experience right from the start,
+- For reference look point ([5. Configure the host folder](#5-configure-the-hosts-folder)).
 
+---
 
-### 📦 Package version
+### 📦 Package version and flatpak
 Allow the user to define the version of various aspects and decide if some features are enabled:
-- Nixpkgs version, both stable and unstable
-- Home-manager version
+- `flake.nix`: Nixpkgs stable (unstable is always at the latest)/home-manager/stylix,
+  - These can be changed freely in the future to stay up to date.
+- `configuration.nix`: stateVersion/homeStateVersion,
+  - The first time it is a good idea to make them match the rest. However they should not be changed later. Basically they should be set at first build and then be left alone
 - Flatpak (true/false)
 
+To view the latest release numbers refer to the [release notes](https://nixos.org/manual/nixos/stable/release-notes)
+
+---
 
 ### ❄️ Hybrid (declarative + non declarative for some modules) ###
-  - Some modules are better customized using their official methods.
-  - In this case a `.nix` file applies a basic logic, while other files/directories handles the rest.
+  - Some modules are better customized using their official methods (aka not with nix-sintax).
+  - In this case a `.nix` file applies a basic logic and/or source an external directory/file; while other files/directories handles the rest.
     - For a more in-depth explanation see [❄️ Note on the declarative aspects](#️-note-on-the-declarative-aspects)
  
+---
+
 ### 🎨 Theming ## 
-A base 16 colorscheme can be chosen before building (hosts-specific). The user may also chose whatever to enable catppuccin or not (along with the flavor and accent) [from the official repo](https://nix.catppuccin.com/)
-  - This should allow to configure almost everything globally right from the get go
-  - Wallpapers are defined to be hosts specific and they automatically apply smartly in all desktop environments except xfce (since it is the guest user default environment i decided to not mess with it)
-    - Wallpapers order heavily rely on the monitor list to be in order from the main monitor to all subsequent monitors. If the order is wrong then the monitor order is wrong.
-      - In kde plasma the primary monitor override this settings. This means that any monitor that is selected as `primary` get the first wallpaper of the list etc  
+A base 16 colorscheme can be chosen before building (hosts-specific). The user may also chose whatever to enable catppuccin or not (along with the flavor and accent) [from the official repo](https://nix.catppuccin.com/).
+- To view the possible flavor and accent colors refer to [(catppuccin palette)](https://catppuccin.com/palette/)
+- The benefit over using a normal base16Theme of catppuccin is that these modules are tailored, meaning the colors are chosen by a human and not blindly applied by an algorithm, resulting in a more pleasant experience.
+
+To see where this custom catppuccin is enabled it is enough to look at the "targets" section in `stylix.nix`, for example:
+
+```nix
+# If catppuccin is disabled then it is set to true, letting the base16Theme do it's job
+# If catppuccin is enabled then it is set to false, letting catppuccinNix do it's job
+alacritty.enable = !catppuccin;
+```
+
+- This should allow to configure almost everything globally right from the get go
   
-### 🪟 Multiple Desktop Environments ###
-One may choose in `variables.nix` which one to enable and which one to disable. If nothing is defined it fallback to hyprland
-- When switching desktop environment it is important to rebuild the boot and not the config. This allow the user to not be kicked out from the current de session if that specific de is disabled.
-- Once the boot rebuild worked run the regular rebuild, both system and home-manager for example by using the zsh alias `sw && hms`   
-  - If for some reason the user rebuild not in this way, then it get kicked out and only tty is available but when logging in as regular user it crash then the rebuild needs to be done through the root account:
-- Until the rebuild is done personalized aspects do not work. This means the user may login into the de, but aspects like keybindings and all the personalization in hyprland do not work.
-  - Especially in hyprland. If it is set to false, rebuild and then to true the personalization is not there. It is necessary to rebuild and then reboot again.
-    - Most probably after re-enabling hyprland there is an error that tells that hyprland.conf may be clobbered. To allow the rebuilt it needs to be removed. This means running the following command:
+---  
 
-```bash
-# Run this if the clobbered error for hyprland.conf is encountered
-rm ~/.config/hypr/hyprland.conf
+### 🖌️ Wallpaper(s) ## 
+  
+Wallpapers are defined to be hosts specific and they are tied to the monitor list.
+- They automatically apply smartly in all desktop environments except xfce and cosmic.
+
+- The first monitor get the first wallpaper, the second monitor the second wallpaper etc. 
+  - In kde plasma the primary monitor override this settings. If nothing is done the behavior is as expected,
+  -  If the "primary" monitor is changed in the system settings than it will get the first wallpaper in teh list. 
+  
+If someone prefer to set the wallpaper manually then it is possible in certain desktop environment:
+- For hyprland they are set in hyprland-hyprpaper. Hyprland does not have an easy way to set the wallpaper so it is best to keep it as is
+- XFCE is left as default to allow the guest user a stock experience.
+
+#### kde-main.nix
+Comment out or remove the specific lines that handles the wallpapers logic
+```nix
+# wallpaper = wallpaperFiles;
 ```
 
-```bash
-# Run this command to avoid being kicked out from the current session
-# This command allow to change to any combination of de and still have the personalized de
-cd ~/nixOS && sudo nixos-rebuild boot --flake .
-sw && hms
-reboot
-```
+#### gnome-main.nix
+Comment out or remove the specific lines that handles the wallpapers logic
+```nix
+# "org/gnome/desktop/background" = {            
+#   picture-uri = "file://${wallpaperPath}";      
+#   picture-uri-dark = "file://${wallpaperPath}"; 
+#   picture-options = lib.mkForce "zoom";         
+# };                                             
 
-```bash
-# Run this command if you got kicked out, are in a tty and login as normal user do not work
-# First login as root
-# username --> root
-# password --> normally the same as the regular admin user, but this is defined during the installation of nixOS itself
-# Change <username> with the default admin user where the nixOS repo is located. For example /home/krit
-# This command allow to change to any combination of de and still have the personalized de
-# Since the logged user is root it is better to first reboot, then login as regular user and then run sw && hms
-nix-shell -p git && cd
-cd /home/<username>/nixOS
-git config --global --add safe.directory '*'
-nixos-rebuild boot --flake .
-reboot
+# "org/gnome/desktop/screensaver" = {             <-- OPTIONAL: REMOVE THIS TOO
+#   picture-uri = "file://${wallpaperPath}";
+# };
 ```
+---
 
+### 🪟 Multiple Desktop Environments
 
   - **Hyprland + Waybar**: A modern, tile-based window compositor setup on Wayland.
   - **KDE Plasma**: A highly configurable desktop environment, with a launcher similar to windows
   - **Gnome**: A famous and simple desktop environment, with a launcher similar to macOS. Ubuntu/mint user are very used to it
+  - **Cosmic**: A revisited gnome made from the company system76, known for being the creators of popOS
   - **XFCE**: A lightweight, stable, and classic desktop experience.
     - For now xfce is enabled only if the `guest` user is enabled. 
   
+
+You can enable or disable desktop environments (Hyprland, GNOME, KDE, etc.) by editing `variables.nix`. However, disabling the environment you are currently using requires caution to avoid being locked out of the system.
+
+> **⚠️ Warning:** If you set your **current** desktop to `false` and run `nixos-rebuild switch`, the graphical interface will terminate immediately. You will be dropped into a TTY, and in some cases, your user shell may break, forcing you to recover via `root`.
+
+#### ✅ The Safe Way (Prevent Lockouts)
+
+When changing Desktop Environments, **do not** apply the config immediately. Instead, build it for the *next* boot. This ensures you can reboot cleanly into the new environment.
+
+1. **Edit your config** (enable/disable the DE as needed).
+2. **Build the bootloader only:**
+```bash
+cd ~/nixOS
+sudo nixos-rebuild boot --flake .
+```
+
+
+3. **Reboot** your system.
+4. **Finalize the setup:** Once logged into the new session, run your standard update command to apply Home Manager customizations (themes, keybindings, etc.):
+```bash
+sw && hms  # or any equivalent update alias
+```
+
+#### 🚨 Emergency Recovery (Stuck in TTY)
+
+If you accidentally disabled your current desktop and `nixos-rebuild switch` kicked you out, you may find yourself in a text-only console (TTY). 
+- If logging in as regular user work then rebuilding is enough
+
+```bash
+sw && hms  # or any equivalent update alias
+```
+
+If your normal user shell fails to log in, follow these steps:
+
+1. **Login as Root:**
+* **User:** `root`
+* **Password:** (Same as your admin user, unless explicitly changed).
+
+
+2. **Repair the System:**
+Run the following commands to rebuild the system from the root user. Replace `<your-username>` with your actual folder name (e.g., `krit`).
+```bash
+# 1. Enter the NixOS directory
+cd /home/<your-username>/nixOS
+
+# 2. Allow root to access the user's git repo
+nix-shell -p git --command "git config --global --add safe.directory '*'"
+
+# 3. Rebuild the boot config for the next restart
+nixos-rebuild boot --flake .
+
+# 4. Reboot
+reboot
+
+```
+
+
+3. **Finalize:** After rebooting, log in as your normal user and run `sw && hms` to restore your dotfiles.
+
+#### 🛠️ Troubleshooting
+
+**Issue: "File .../hyprland.conf would be clobbered"**
+When re-enabling a desktop (especially Hyprland) after having it disabled, Home Manager might fail because a config file was left behind.
+
+**Fix:** Remove the conflicting file manually and retry the build.
+
+```bash
+rm ~/.config/hypr/hyprland.conf
+sw && hms
+```
+
+**Issue: Missing Personalization**
+
+If you boot into a new desktop and it looks "vanilla" (missing keybindings or wallpapers), it usually means Home Manager hasn't run yet. Simply run your switch command (`sw && hms`) again to apply the user-level configurations.
+
+---
+
 ### 👤 Ephemeral Guest User ### 
 A specialized secure account for visitors (basic features):
   - **Login credentials**: both password and usernames are `guest`
   
-  - **Restricted**: No `sudo` access and no permission to modify the NixOS configuration.
+  - **Restricted**: No `sudo` access and no permission to view nor modify the NixOS configuration.
   
   - **Essential Tools**: Pre-loaded with a Browser, File Manager, Text Editor, image viewer, archive manager, calculator.
   
   - **Forced desktop environment**: This user only has access to `xfce` and its default applications. Applications that require sudo priviliges either do not open or simply fail to do anything.
   
-  - **Tailscale firewall**: This user does not have access to tailscale and can not ping even local ip regardless of the  `tailscale` variable chosen in the hosts block
+  - **Tailscale firewall**: This user does not have access to tailscale and can not ping even local ip regardless if tailscale is on or off
   
   - **Privacy Focused**: The entire user home folder (including browser cookies, sessions, and saved files) is wiped automatically on every reboot or shutdown (logging out keep the data).
     - For now this is achieved by using `tmpfs`. This tells that the user data (home path) is written on ram and not ssd/hdd.
       - This has 3 major advantages: 
         - Lifespan of the pc component (ram is rated to last more than disks)
         - Ensure privacy: Defining a script to delete the content in a disk is subject to silent fails. This means the data could not be completely removed. Ram is sure to be deleted once the pc restart 
-      - The main disadvantage is possible performance issues. 
-        - The current config tells that the guest user can use up to a certain ram space. This means that if a user is using more it would not be possible  
+      - The main disadvantage is a possible performance issues on system with low ram. 
+        - The current config tells that the guest user can use up to a certain ram space. If a host has low ram it is possible to have freezes
+
+- It is possible to change the  of the data deletion from ram to disk by changing `guest.nix`
+
+
+```nix
+# 🧹 EPHEMERAL HOME  <-- REMOVE/COMMENT OUT THIS ENTIRE BLOCK
+    fileSystems."/home/guest" = {
+      device = "none";
+      fsType = "tmpfs";
+      options = [
+        "size=25%"
+        "mode=700"
+        "uid=${toString guestUid}"
+        "gid=${toString guestUid}"
+      ];
+    };
+```
+
+Replace with the following block:
+```nix
+# 🧹 DISK-BASED AUTO-WIPE (Low RAM Alternative)
+    # Wipes /home/guest at every boot before the login screen starts.
+    systemd.services.wipe-guest-home = {
+      description = "Wipe guest home directory on boot";
+      wantedBy = [ "multi-user.target" ]; 
+      before = [ "display-manager.service" "systemd-logind.service" ];
+      serviceConfig = {
+        Type = "oneshot";
+        # Script to remove the folder and recreate it with correct permissions
+        ExecStart = pkgs.writeShellScript "wipe-guest" ''
+          # 1. Nuke the directory if it exists
+          if [ -d /home/guest ]; then
+            rm -rf /home/guest
+          fi
+          
+          # 2. Recreate it fresh
+          mkdir -p /home/guest
+          
+          # 3. Set ownership (guest:guest) and permissions (read/write only for user)
+          chown ${toString guestUid}:${toString guestUid} /home/guest
+          chmod 700 /home/guest
+        '';
+      };
+    };
+```
+
 
 ### 🏠 Home Manager Integration ### 
 Fully declarative management of user dotfiles and applications.
@@ -151,22 +298,20 @@ Fully declarative management of user dotfiles and applications.
 ### 🧇 Tmux ### 
 Customized terminal multiplexer.
 
-### 🌟 Zsh + Starship Hybrid shell setup (local and custom) with starship.
-  
-### 🔢 Customizable versions ###
-  - `stateVersion`, `HomestateVersion`, `nixpkgs.url`, `home-manager` and `stylix` versions can be changed
-    - Tough they can be changed individually, ideally they should match
-  - `stateVersion` and `HomestateVersion` should not be changed after the first boot
-    - These are hosts-specific. Each hosts can have different versions, but inside the hosts they should match
-  - `nixpkgs.url`, `home-manager` and `stylix` versions can be changed freely (for example in case an update is released).
-    - they should not be lower than `stateVersion` and `HomestateVersion`. This can causes unexpected downgrades and/or rebuild failures
-    - note that the changes apply to all hosts
+### 🌟 Zsh + Starship
+Starship provide beautiful git status symbols, programming language symbols, the time, colors and many other features.
+
+ZSH is hybrid:
+- A nix files contains nix-specific aliases and behaviour
+- It sources another file called `~/.zshrc_custom`
+  - This allow the user to define aliases which are not nix-specific inside this custom file. 
+  - This give the user the possibility to use the same zshrc for any other linux distro that it may have 
 
 ---
 
 ## 🚀 Installation
 
-If the setup is installed completely (every feature enabled) it is suggested to have at least 128 gb of storage if the intent is to use it as main distro. For the installation expect anywhere from 20 to 40 gb. The rest is for user storage, and having at least 60 gb free in my opinion is a must in 2025
+If the setup is installed completely (every feature enabled) it is suggested to have at least 128 gb of storage if the intent is to use it as main distro. For the installation expect anywhere from 20 to 50 gb. The rest is for user storage, and having at least 60 gb free in my opinion is a must in 2025
 
 
 
@@ -180,6 +325,8 @@ To get started with this setup, follow these steps:
 
 ### 1. Install NixOS
 Follow the [NixOS Installation Guide](https://nixos.org/manual/nixos/stable/#sec-installation).
+
+There is a phenomena called "the 46% ghost". For some reason nixOS during it's installation likes to spend a lot of time at 46% progress, and the logs are not very descriptive. Do not worry if it seems stuck, it will eventually progress. This part can take a lot of time, just be patient.
 
 **Recommended Install Settings if using nixOS gui installer:**
 
@@ -268,13 +415,16 @@ One can switch back to grub at anytime
 Open a terminal in your fresh install:
 
 ```bash
-nix-shell -p git git clone [https://github.com/nicolkrit999/nixOS.git](https://github.com/nicolkrit999/nixOS.git)
+nix-shell -p git --run "git clone https://github.com/nicolkrit999/nixOS.git"
 cd nixOS/
 ````
 
 ### 3. Create Your Host Configuration (optional)
+I provided with a sample hosts configuration `~/nixOS/hosts/template-host `
+- This host contains a very simple configuration, with only hyprland enabled, alacritty as default terminal, nord as base16Theme, us as keyboard layout, already defined wallpapers. The other aspects can be changed later
+  - Using this host as a starting point allow for a fast first-time deployment  
 
-If you intend for your computer to **not** be named `nixos-desktop`, create a new host folder by copying the reference template:
+If you intend for your computer to **not** be named `template-host` (most probably), create a new host folder by copying the reference template:
 
 ```bash
 cd ~/nixOS/hosts
@@ -288,8 +438,7 @@ After this is done it is needed to modify inside `flake.nix` the `hostNames` lis
 
 ```nix
 hostNames = [
-  "nixos-desktop"
-  "nixos-laptop"
+  "template-host" # <-- replace with the chosen hostname
 ];
 ```  
 
@@ -308,84 +457,117 @@ git add -f hardware-configuration.nix
 
 ### 5. Configure the hosts folder
 #### `variables.nix`
+
 This file contains all the aspects that may change from host to host.
-- Changes made here allow to have different environment that share the same base.
-  - For example on the desktop pc one may not need the guest user, while on the laptop it may be useful 
+
+* Changes made here allow you to have different environments that share the same base code.
+* For example: on a desktop PC you might disable the `guest` user, while on a laptop you might enable it.
+
+
 
 **Variables to define:**
-To have a working setup every single variable needs to be defined, otherwise the build will fail.
+To have a working setup, every single variable needs to be defined. If a variable is missing, the build will fail.
 
-  * `hostname` : Must match the folder name you created in Step 3.
-  
-  * `system` : Architecture (e.g., `x86_64-linux`).
-  
-  * `user` : Your desired username.
+> **⚠️ CRITICAL WARNING: Edit BEFORE you build!**
+> Do not blindly install the `template-host` configuration with the intention of changing the username later.
+> **The Trap:**
+> NixOS is declarative. It does not "rename" users; it simply ensures the users you declared exist.
+> 1. If you install as `template-user` first, your data is stored in `/home/template-user`.
+> 2. If you later change the variable to `user = "francesco"`, NixOS will create a **brand new** user.
+> 3. **The Result:** You will end up with two home folders. Your old data stays in `/home/template-user` (which you can no longer log into easily), and you will be logged into a completely empty `/home/francesco`.
+> 
+> 
+> **The Fix:**
+> Always set your real `user`, `hostname`,  **before** running your first installation. The others can be changed later
 
-  * `gitUserName` : Github user name.
+  * `hostname` : Must match the folder name you created in Step [ 3 (create your hostname)](#3-create-your-host-configuration-optional).
   
-  * `gitUserEmail` : Github user e-mail.
+  * `system`: Architecture (e.g., `x86_64-linux`).
   
-  * `stateVersion` & `homeStateVersion` : Keeps your config stable (e.g., `25.11`).
-  
-  * `hyprland` : Whatever to enable hyprland or not
+  * `user`: Your desired username.
 
-   * `gnome` : Whatever to enable gnome or not
+  * `gitUserName`: Github user name.
+  
+  * `gitUserEmail`: Github user e-mail.
+  
+  * `stateVersion` & `homeStateVersion`: Keeps your config stable (e.g., `25.11`).
+  
+  * `hyprland`: Whatever to enable hyprland or not
+
+   * `gnome`: Whatever to enable gnome or not
 
    * `kde`: Whatever to enable kde or not
 
    * `cosmic`: Whatever to enable cosmic or not
   
-  * `flatpak` : Whatever to enable support for flatpak
+  * `flatpak`: Whatever to enable support for flatpak
   
-  * `term` : Default terminal, used for keybindings and tmux
-    * Depending on the terminal it may be necessary to add an entry `set -as` to `tmux.nix`. For example:
+  * `term`: Default terminal, used for keybindings and tmux
+    * Depending on the terminal it may be necessary to add an entry `set -as` to `tmux.nix`. This is necessary to tell tmux that the current terminal support full colors. 
+  
+  For example:
   
   ```nix
   set -as terminal-features ",xterm-kitty:RGB"
   ```
 
-  * `base16Theme`  which base 16 theme to use  
+  * `base16Theme`: which base 16 theme to use  
   * Reference https://github.com/tinted-theming/schemes/tree/spec-0.11/base16
   
-  * `polarity`  Decide whatever to have a light or a dark theme in stylix.nix
+  * `polarity`: Decide whatever to have a light or a dark theme in stylix.nix
     * This should make sense with the global base16 themes. This means a dark-coloured global theme should have a dark polarity and vice-versa
     * Currently it is used in the following files:
       * `qt.nix`, `kde/main.nix` 
   
-  * `catppuccin` : Whatever to enable catppuccin theming or not. If disabled all the theming is done via the base theme. Note that some modules may require attention in order to be fully customized. For more information see point 6
+  * `catppuccin`: Whatever to enable catppuccin theming or not. If disabled all the theming is done via the base theme. Note that some modules may require attention in order to be fully customized. For more information see [(the catppuccin features)](#-theming)
     
-  * `catppuccinFlavor` : What catppuccin flavor to use
+  * `catppuccinFlavor`: What catppuccin flavor to use
+    * the flavor name should be all lowercase. frappé needs to be written without accent so  frappe
   
-  * `catppuccinAccent` : What catppuccin Accent to use
+  * `catppuccinAccent`: What catppuccin Accent to use
 
   
-  * `timezone` : Your system time zone (e.g., `Europe/Zurich`).
+  * `timezone`: Your system time zone (e.g., `Europe/Zurich`).
+    * To choose the timezone refer to the [(IANA time zone database)](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) 
   
   * `weather` (waybar and kde-specific-optional): Location for the weather widget (e.g., `Lugano`).
   
-  * `keyboardLayout` : Single or list of keyboard layout
+  * `keyboardLayout`: Single or list of keyboard layout
   
-  * `keyboardVariant` : Keyboard variant
+  * `keyboardVariant`: Keyboard variant
+    * If more layout are defined a comma is needed for each layout except the first one. For example:
 
+```nix
+ keyboardLayout = "us,ch,de,fr,it"; # 5 different layouts
+  keyboardVariant = "intl,,,,"; # main variant + 4 commas (total 5 values, same as keyboardLayout)
+```
 
-  * `screenshots` (global-optional, a fallback apply): Setup the preferred directory where screenshots are put
+  * `screenshots`: Setup the preferred directory where screenshots are put
     * Currently the path and shortcuts only work in hyprland and kde 
   
-  * `tailscale` : Whatever to enable or disable the tailscale service.
+  * `tailscale`: Whatever to enable or disable the tailscale service.
     * "guest" user has this service disabled using a custom firewall rules in configuration.nix (host-specific)
 
-  * `guest` : Whatever to enable or disable the guest user.
-    * If the guest account is enabled then it needs to define the ram usage limit (default to 4GB). Reference ~/nixOS/nixos/modules/guest.nix section "🧹 EPHEMERAL HOME (Wipe on Reboot)"
-
+  * `guest`: Whatever to enable or disable the guest user.
   
-  * `zramPercent` : Ram swap to enhance system performance.
+  * `zramPercent`: Ram swap to enhance system performance.
 
-  * `monitors` : List of monitor definitions (resolution, refresh rate, position).
-    * The ID of a monitor is also tied to the workspace block in `/nixOS/home-manager/modules/hyprland/main.nix`
-      * This block assign workspace numbers to a fixed monitor. This allow a consistent experience on multi-monitors setup. Double check the the identifiers match what you want to have. If there is only one monitor this block should be removed/commented
-      * The identifier changes for each person so i did not put it hosts-specific
+  * `monitors`: List of monitor definitions (resolution, refresh rate, position).
+    * For a guide on how to set it up refer to the [(hyprland guide)](https://wiki.hypr.land/Configuring/Monitors/) 
+
+* `wallpapers` : List of wallpapers corresponding to the monitors.
+  * **How to get the values:**
+  1. **`wallpaperURL`**: Nix requires a direct link to the raw image file. If using GitHub, standard links won't work. Copy your GitHub link and paste it into [(git-rawify)](https://git-rawify.vercel.app/) to get the correct "Raw" URL.
+  2. **`wallpaperSHA256`**: Generate the hash by running this command in your terminal:
+
+  * **Troubleshooting URLs**:
+  If your URL contains special characters (like `%20` for spaces), the command might fail or return an "invalid character" error. To fix this, **wrap the URL in single quotes**:
+  * ❌ *Fail:* `nix-prefetch-url https://example.com/my%20wallpaper.png`
+  * ✅ *Success:* `nix-prefetch-url 'https://example.com/my%20wallpaper.png'`
   
-  * `wallpapers` : List of wallpapers corresponding to the monitors.
+```bash
+nix-prefetch-url <your_raw_url>
+```
 
   * `idleConfig` : Power management settings (timeouts for dimming, locking, sleeping).
 
@@ -393,60 +575,42 @@ To have a working setup every single variable needs to be defined, otherwise the
 
 ```nix
 {
-  # ---------------------------------------------------------------
-  # 🖥️ HOST VARIABLES
-  # ---------------------------------------------------------------
-
-  hostname = "nixos-desktop";
+  hostname = "template-host";
   system = "x86_64-linux";
 
-  # ⚙️ VERSIONS
-  # During the first installation it is a good idea to make them the same as the other versions
-  # Later where other version may be updated these 2 should not be changed, meaning they should remain what they were at the beginning
-  # These 2 versions define where there system was created, and keeping them always the same it is a better idea
   stateVersion = "25.11";
   homeStateVersion = "25.11";
 
-  # 👤 USER IDENTITY
-  user = "krit";
-  gitUserName = "nicolkrit999";
-  gitUserEmail = "githubgitlabmain.hu5b7@passfwd.com";
+  user = "template-user";
+  gitUserName = "template-user";
+  gitUserEmail = "template-user@example.com";
 
-  # 🖥️ DESKTOP ENVIRONMENT
   hyprland = true;
-  gnome = true;
-  kde = true;
-  cosmic = true;
+  gnome = false;
+  kde = false;
+  cosmic = false;
 
-  # 📦 PACKAGES & TERMINAL
-  flatpak = true;
-  term = "kitty";
+  flatpak = false;
+  term = "alacritty";
 
-  # 🎨 THEMING
   base16Theme = "nord";
   polarity = "dark";
   catppuccin = false;
   catppuccinFlavor = "mocha";
   catppuccinAccent = "sky";
 
-  # ⚙️ SYSTEM SETTINGS
   timeZone = "Europe/Zurich";
   weather = "Lugano";
-  keyboardLayout = "us,ch,de,fr,it";
-  keyboardVariant = "intl,,,,";
+  keyboardLayout = "us";
+  keyboardVariant = "intl";
 
   screenshots = "$HOME/Pictures/screenshots";
 
-  # 🛡️ SECURITY & NETWORKING
-  tailscale = true;
-  guest = true;
+  tailscale = false;
+  guest = false;
   zramPercent = 25;
 
-  # 🖼️ MONITORS & WALLPAPERS
   monitors = [
-    "DP-1,3840x2160@240,1440x560,1.5"
-    "DP-2,3840x2160@144,0x0,1.5,transform,1"
-    "HDMI-A-1,disable"
   ];
 
   wallpapers = [
@@ -460,7 +624,6 @@ To have a working setup every single variable needs to be defined, otherwise the
     }
   ];
 
-  # 🔋 POWER MANAGEMENT
   idleConfig = {
     enable = true;
     dimTimeout = 600;
@@ -469,126 +632,187 @@ To have a working setup every single variable needs to be defined, otherwise the
     suspendTimeout = 7200;
   };
 }
-
 ```
 
 #### `local-packages.nix`
 - It contains packages that are intended to only be installed in that specific hosts
-  - Remove/add/change as needed
+  - add as needed
 
 #### `flatpak.nix`
 - It contains flatpak packages that are intended to only be installed in that specific hosts
-  - Remove/add/change as needed  
+  - add as needed
 
-### 6. (kinda optional) Configure hyprland workspaces `hyprland/main.nix`
-- For me i configured some workspaces to be binded to a certain monitor. To achieve this it is necessary to tell the workspace number and the monitor identifier.
-  - Since the identifier may change, or other user may not want this logic or may want to edit it this part require modification
-- If these changes are not done then it default to show a workspace in the monitor the mouse is currently hovered
 
-```nix
-workspace = [
-        "w[tv1], gapsout:0, gapsin:0" # No gaps if only 1 window is visible
-        "f[1], gapsout:0, gapsin:0" # No gaps if window is fullscreen
+#### `modules.nix`
+This file contains specific "Power User" configurations and aesthetic tweaks that may vary significantly between machines (e.g., desktop vs. laptop).
 
-        "1, monitor:DP-1"
-        "2, monitor:DP-1"
-        "3, monitor:DP-1"
-        "4, monitor:DP-1"
-        "5, monitor:DP-1"
 
-        "6, monitor:DP-2"
-        "7, monitor:DP-2"
-        "8, monitor:DP-2"
-        "9, monitor:DP-2"
-        "10, monitor:DP-2"
-      ]; 
-```
+#### `home.nix`
 
-### 7. (kinda optional) KDE `kde/inputs.nix` configuration 
+---
 
-This configuration uses `plasma-manager` to strictly manage input devices (Mouse & Touchpad). Unlike generic Linux configs, Plasma Manager requires specific **Hardware IDs** to apply settings like "No Acceleration" or "Tap to Click".
+### 6. (Optional) Customize the host-specific `modules.nix`
 
-If this step is not done kde recognize that the id do not match and it will apply the default settings.
-- Since it is defined it would be better to either comment out/remove completely this module or put the right data
+* **How it works**: The system checks if `hosts/<your_hostname>/modules.nix` exists. If it does, it merges these variables with your main configuration.
+  * The file is included in the template-host, with a sample configuration. This provide a starting base. If not needed it can be deleted at any moment and all the fallback will apply 
+* **The Safety Net**: If this file is missing (or if you omit specific variables), the system applies a **safe fallback**. This ensures the build never fails, even if you don't define these complex options.
 
-#### How to find your Hardware IDs
-Run the following command in your terminal to list input devices:
+**Available Options:**
 
-```bash
-# For Mouse
-cat /proc/bus/input/devices | grep -A 5 "Mouse"
+| Variable                       | Description                                                                                                           | Fallback (If undefined)                                                           |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| **`hyprlandWorkspaces`**       | Binds specific workspaces to specific monitor ports (e.g., "1 on DP-1").                                              | **Auto-detect:** Workspaces open on the monitor with the mouse cursor.            |
+| **`kdeMice` / `kdeTouchpads**` | Applies strict settings (accel profile, speed) to specific Hardware IDs in KDE.                                       | **Plug & Play:** KDE applies standard default settings to all mice.               |
+| **`waybarWorkspaceIcons`**     | Maps specific workspace numbers to custom icons (e.g., "8" -> "Terminal Icon").                                       | **Numbers:** Waybar simply displays the workspace number (1, 2, 3...).            |
+| **`waybarLayoutFlags`**        | Replaces keyboard layout text codes with emojis (e.g., "en" -> "🇺🇸").                                                  | **Text Codes:** Waybar displays the ISO code (en, it, de).                        |
+| **`starshipZshIntegration`**   | Controls if Starship is auto-loaded in Zsh (`eval "$(starship init zsh)"`). Set to `false` if you manually source it. | **`true` (Enabled):** Starship loads automatically for a standard setup.          |
+| **`nixImpure`**                | If `true`, the `sw` and `upd` aliases run with `--impure` (needed for unversioned files/secrets).                     | **`false` (Pure):** Aliases use standard `nh` commands (or pure `nixos-rebuild`). |
 
-# For Touchpad
-cat /proc/bus/input/devices | grep -A 5 "Touchpad"
-````
 
-Look for the output line starting with `I: Bus=...`. You need the **Vendor** and **Product** codes (4 characters each).
+#### `modules.nix` Example
 
-**Example Output:**
-
-```text
-N: Name="Logitech G403 HERO Gaming Mouse"
-...
-I: Bus=0003 Vendor=046d Product=c08f Version=0111
-```
-
-#### Where to put the data
-
-1.  Open `home-manager/modules/kde/inputs.nix`.
-2.  Update the `mice` or `touchpads` list with your specific values.
-
+Modify this file in `hosts/<your_hostname>/modules.nix` to override the defaults.
 
 ```nix
-    mice = [
-      {
-        enable = true;
-        name = "Logitech G403"; 
-        vendorId = "046d";  # <--- Update this
-        productId = "c08f"; # <--- Update this
-        
-        acceleration = -1.0;
-        accelerationProfile = "none";
-      }
-    ];
+{
+  # ---------------------------------------------------------------------------
+  # 🖥️ HYPRLAND WORKSPACES
+  # ---------------------------------------------------------------------------
+  # Strict monitor bindings. 
+  # Use `hyprctl monitors` to find your specific monitor names (e.g., DP-1, eDP-1).
+  # Int his example each monitor get 5 workspaces
+  hyprlandWorkspaces = [
+    "1, monitor:DP-1"
+    "2, monitor:DP-1"
+    "3, monitor:DP-1"
+    "4, monitor:DP-1"
+    "5, monitor:DP-1"
+    "6, monitor:DP-2"
+    "7, monitor:DP-2"
+    "8, monitor:DP-2"
+    "9, monitor:DP-2"
+    "10, monitor:DP-2"
+  ];
+
+  # ---------------------------------------------------------------------------
+  # 🖱️ KDE INPUT DEVICES
+  # ---------------------------------------------------------------------------
+  # Strict hardware IDs for Plasma Manager.
+  # Use `cat /proc/bus/input/devices` to find Vendor/Product IDs.
+  kdeMice = [
+    {
+      enable = true;
+      name = "Logitech G403"; 
+      vendorId = "046d"; 
+      productId = "c08f"; 
+      acceleration = -1.0;
+      accelerationProfile = "none";
+    }
+  ];
+
+  # Leave empty for desktop PCs
+  kdeTouchpads = [ ];
+
+  # ---------------------------------------------------------------------------
+  # 🧩 WAYBAR ICONS & FLAGS
+  # ---------------------------------------------------------------------------
+  # 1. Custom Workspace Icons
+  # Some ide do not show the actual icons depending on which fonts is configured
+  waybarWorkspaceIcons = {
+    "1" = "";
+    "7" = ":"; # Browser
+    "8" = ":"; # Terminal
+    "9" = ":"; # Music
+    "10" = ":"; # Chat
+    "magic" = ":";
+  };
+
+  # 2. Custom Layout Flags (Format: "format-<layout_code>")
+  waybarLayoutFlags = {
+    "format-en" = "🇺🇸";
+    "format-it" = "🇮🇹";
+    "format-de" = "🇩🇪";
+  };
+
+  # The fallback is true
+  starshipZshIntegration = false;
+
+  # The fallback is false
+  nixImpure = true;
+}
+
 ```
 
-**Note for Desktop Users:** Keep the `touchpads` list empty (`[]`), or comment it  to avoid errors.
-
-**Note for Laptop Users:** Uncomment the touchpad section and add your specific IDs.
 
 
-### 8. (optional) Other files that may require manual attention
+### 7. (optional) Other files that may require manual attention
 - These files can be modified also after building.
   - These are files that one most likely will want to configure right from the beginning because they cause a "wrong" experience
-
-#### ~/nixOS/home-manager/modules/waybar
-Files that needs attentions are:
--  ~/nixOS/home-manager/modules/waybar/default.nix
-   - `format-icons`: This block define certain icon based on fixed workspace.  
-     - One would want to customize them since a workspace number may not reflect the user intended app
-
-   - `hyprland/language`: This block defines the countries flags that are shown when changing keyboard layout.
-     - One would want to customize then to match the layout to the flag
-  
-- ~/nixOS/home-manager/modules/waybar/style.css
-  - `🧩 RIGHT-SIDE MODULES`: It contains hardcoded colors, such as @peach and @green. Change them by using one of the provided options in `./default.nix` map colors or define a new one using `@define-color`
+- Unlike `modules.nix` these are files so personal that are better changed in their original module file
 
 #### ~/nixOS/home-manager/modules/firefox.nix and ~/nixOS/home-manager/modules/chromium.nix
 - They contains personalized aspects like homepage, toolbars visible items, extensions. One may want to change them
 
-#### ~/nixOS/home-manager/home.nix/
-It make sure certain directories are created/excluded. One may not need them
-- Created folders are under `home.activation`
-  - the screenshot path is forced in all desktop environment. 
-- It create some others folder that one may not use 
-- Excluded folders are under `xdg.userDirs` (if a directory is set to `null` then it is disabled)
-- It include a symlink for `~/tools/jdtls`. One may want to delete it
 
 #### ~/nixOS/home-manager/modules/zathura.nix/
 - The font size and family is hardcoded. One may want to change it
 
-#### ~/nixOS/home-manager/modules/starship.nix/
-- I disabled `enableZshIntegration = false;` because it's eval is defined in my stowed .zshrc_custom. if that is not the case then one may need to enable it
+
+Here is the updated section for your `README.md`. I have restructured the text to be more concise and added a table that clearly summarizes the capabilities, followed by the example code.
+
+---
+
+### 8. (Optional) Customize the host-specific `home.nix`
+
+This file allows you to manage user-specific configurations that should **only** apply to the current machine. Unlike `local-packages.nix` (which installs system-wide packages), this file uses Home Manager, allowing you to configure dotfiles, environment variables, and symlinks.
+
+**Common Use Cases:**
+
+| Feature                     | Description                                       | Example Usage                                                                               |
+| --------------------------- | ------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| **`home.packages`**         | Installs packages for the user only on this host. | Installing `blender` or `gimp` only on a powerful desktop PC.                               |
+| **`xdg.userDirs`**          | Overrides the default `~/` folders.               | Hiding unused folders like `~/Public` or `~/Templates` on a laptop.                         |
+| **`home.file`**             | Links a package or file to a specific path.       | Linking `jdtls` to `~/tools/jdtls` so your Neovim config works the same across all distros. |
+| **`home.sessionVariables`** | Defines shell variables for this host only.       | Setting `JAVA_HOME` or `JDTLS_BIN` only on machines used for development.                   |
+
+#### `home.nix` Example
+
+Create or modify `hosts/<your_hostname>/home.nix`:
+
+```nix
+{ pkgs, ... }:
+
+{
+  # ---------------------------------------------------------------------------
+  # 🏠 HOST-SPECIFIC HOME CONFIGURATION
+  # ---------------------------------------------------------------------------
+  # This file is automatically imported if it exists.
+
+  # 1. Install specific tools
+  home.packages = with pkgs; [
+    gimp
+    blender
+  ];
+
+  # 2. XDG Overrides
+  # Folders set to 'null' will be disabled/hidden
+  xdg.userDirs = {
+    publicShare = null;
+    templates = null;
+  };
+
+  # 3. Development Tools & Paths
+  # Creates a fixed path for JDTLS so external configs (like zshrc_custom) can rely on it.
+  home.file."tools/jdtls".source = pkgs.jdt-language-server;
+
+  # 4. Environment Variables
+  home.sessionVariables = {
+    JAVA_HOME = "${pkgs.jdk25}";
+    JDTLS_BIN = "${pkgs.jdt-language-server}/bin/jdtls";
+  };
+}
+
+```
 
 
 ### 9. First Time Build
@@ -599,18 +823,16 @@ Run the following commands to install the system and user configurations.
 
 **Replace `<hostname>` with the hostname defined in `flake.nix`.**
 
-- Remember that the hostname in `flake.nix` hosts sections and the actual directory name inside the parent `hosts` directory should match
-- Additionally in the second step the version in which the command is run should match the home-manager version defined in `flake.nix`
+- Remember that the hostname in `flake.nix` hosts sections and the actual directory name inside the parent `hosts` directory should match.
 
 ```bash
 cd ~/nixOS/
 
 # 1. Build the System (Root Level)
-# For example: sudo nixos-rebuild switch --flake .#nixos-desktop
+# For example: sudo nixos-rebuild switch --flake .#template-host
 sudo nixos-rebuild switch --flake .#<hostname>
 
 # 2. Build the Home (User Level)
-# Note: Since 'home-manager' is not installed yet, 'nix run' alllow to bootstrap it.
 home-manager switch
 ```
 
@@ -630,6 +852,8 @@ git remote set-url origin git@github.com:<github-username>/nixOS.git
 ```
 
 **Maintenance Aliases:**
+
+These aliases have or misses the `--impure` flag in a smart way 
 
 | Command | Action                  | Description                                                                   |
 | :------ | :---------------------- | :---------------------------------------------------------------------------- |
@@ -766,14 +990,17 @@ catppuccinAccent = "sky";
 
 ## Other resources
 ### [Structure](./Documentation/structure/Structure.md)
-These files contains the entire structure of the project, with an explanation of every single file
+This folder contains the entire structure of the project, with a general of every single file
+
+### [In-depth-files-expl](./Documentation/in-depth-files-expl/files-expl.md)
+This folder contains an in-depth explanation of files that could be difficult to understand
 
 ### [Issues](./Documentation/issues/issues.md)
-These file contains issues that i noticed that should be resolved
+This folder contains an explanation of the issues that i noticed and that should eventually be resolved
 - Issues include both warnings than critical one
 
 ### [Ideas](./Documentation/ideas/ideas.md)
-These file contains ideas that i think may benefit the project
+This folder contains ideas that i think may benefit the project
 
 
 

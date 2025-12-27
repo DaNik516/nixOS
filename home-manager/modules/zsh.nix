@@ -1,4 +1,9 @@
-{ config, pkgs, ... }:
+{
+  config,
+  pkgs,
+  nixImpure,
+  ...
+}:
 {
   programs.zsh = {
     enable = true;
@@ -7,8 +12,6 @@
     syntaxHighlighting.enable = true;
 
     sessionVariables = {
-      JAVA_HOME = "${pkgs.jdk25}";
-      JDTLS_BIN = "${pkgs.jdt-language-server}/bin/jdtls";
     };
 
     # -----------------------------------------------------------------------
@@ -17,19 +20,29 @@
     shellAliases =
       let
         flakeDir = "~/nixOS";
+
+        switchCmd =
+          if nixImpure then "sudo nixos-rebuild switch --flake . --impure" else "nh os switch ${flakeDir}";
+
+        updateCmd =
+          if nixImpure then
+            "nix flake update && sudo nixos-rebuild switch --flake . --impure"
+          else
+            "nh os switch --update ${flakeDir}";
       in
       {
 
-        # Nix specific
-        swpure = "cd ${flakeDir} &&  nh os switch ${flakeDir}"; # Switch NixOS configuration (pure)
-        sw = "cd ${flakeDir} &&  sudo nixos-rebuild switch --flake . --impure"; # Switch NixOS configuration (impure)
+        # Smart aliases based on nixImpure setting
+        sw = "cd ${flakeDir} && ${switchCmd}";
+        upd = "cd ${flakeDir} && ${updateCmd}";
 
-        updpure = "cd ${flakeDir} && nh os switch --update ${flakeDir}"; # Update and switch NixOS configuration (pure)
-        upd = "cd ${flakeDir} && nix flake update && sudo nixos-rebuild switch --flake . --impure"; # Update and switch NixOS configuration (impure)
+        # Manual are kept for reference, but use the above aliases instead
+        swpure = "cd ${flakeDir} && nh os switch ${flakeDir}";
+        swimpure = "cd ${flakeDir} && sudo nixos-rebuild switch --flake . --impure";
 
-        hms = "cd ${flakeDir} && home-manager switch --flake ${flakeDir}#$(hostname)"; # Switch Home Manager configuration
-
-        pkgs = "nvim ${flakeDir}/home-manager/home-packages.nix"; # Edit Home Manager packages
+        # Other nix-related aliases
+        hms = "cd ${flakeDir} && home-manager switch --flake ${flakeDir}#$(hostname)";
+        pkgs = "nvim ${flakeDir}/home-manager/home-packages.nix";
 
         fmt-dry = "nix fmt -- --check"; # Check formatting without making changes (list files that need formatting)
         fmt = "cd ${flakeDir} &&  nix fmt -- **/*.nix"; # Format Nix files using nixfmt (a regular nix fmt hangs on zed theme)

@@ -5,6 +5,8 @@
   weather,
   catppuccin,
   catppuccinAccent,
+  waybarWorkspaceIcons,
+  waybarLayoutFlags,
   ...
 }:
 let
@@ -77,19 +79,7 @@ in
 
           # Format for workspace names and icons
           format = "{name} {icon}";
-          format-icons = {
-            "1" = ""; # Empty string means no icon
-            "2" = "";
-            "3" = "";
-            "4" = "";
-            "5" = "";
-            "6" = "";
-            "7" = ":";
-            "8" = ":";
-            "9" = ":";
-            "10" = ":";
-            "magic" = ":"; # Icon for special workspace, e.g. scratchpad
-          };
+          format-icons = waybarWorkspaceIcons;
         };
 
         # -----------------------------------------------------
@@ -97,13 +87,10 @@ in
         # The flag changes based on the current keyboard layout
         # -----------------------------------------------------
         "hyprland/language" = {
-          format-en = "🇺🇸";
-          format-it = "🇮🇹";
-          format-de = "🇩🇪";
-          format-fr = "🇫🇷";
           min-length = 5; # prevent layout jumping when flag changes
           tooltip = true; # disable tooltip on hover
-        };
+        }
+        // waybarLayoutFlags;
 
         # -----------------------------------------------------
         # ☁️ Weather

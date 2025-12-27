@@ -4,6 +4,7 @@
   catppuccinAccent,
   lib,
   config,
+  starshipZshIntegration,
   ...
 }:
 let
@@ -30,7 +31,9 @@ in
   # -----------------------------------------------------------------------
   programs.starship = {
     enable = true;
-    enableZshIntegration = false;
+    # It fallback to true if not defined in the modules.nix of that specific host host
+    # This allow user that have it enabled in their .zshrc_custom to not have issues
+    enableZshIntegration = starshipZshIntegration;
 
     settings = {
       add_newline = true;

@@ -42,19 +42,7 @@
   xdg.userDirs = {
     enable = true; # Generates the configuration file
     createDirectories = true; # Force-creates the folders if they are missing
-
-    # --- Standard Folders ---
-    # These will be created in ~/
-    # Documents, Downloads, Pictures, Videos are created by default.
-
-    # --- Exclusions ---
-    # Setting these to 'null' prevents them from appearing in your home (they are not created)
-    publicShare = null; # Disable the 'Public' folder
-    templates = null; # Disable the 'Templates' folder
   };
-
-  # Create symlinks pointing nix package to specific locations.
-  home.file."tools/jdtls".source = pkgs.jdt-language-server;
 
   # -----------------------------------------------------------------------
   # 🛠️ ACTIVATION SCRIPTS

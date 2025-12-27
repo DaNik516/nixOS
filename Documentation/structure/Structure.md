@@ -93,7 +93,9 @@ Categories can be navigated with the links below:
 │       ├── configuration.nix                      # System-level hardware tweaks
 │       ├── flatpak.nix                            # Applications installed through flatpak
 │       ├── hardware-configuration.nix             # Host-specific hardware configuration
+│       ├── home.nix                               # Host-specific home directory configuration
 │       ├── local-packages.nix                     # Hosts-specific packages
+│       ├── modules.nix                            # More in-depth home-manager modules configuration
 │       └── variables.nix                          # Host-specific variables
 │
 ├── nixos/                                         # ⚙️ System-wide Modules (Root)

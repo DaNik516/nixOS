@@ -57,7 +57,13 @@
         hostname:
         let
           # IMPORT VARIABLES FROM FILE
-          hostVars = import ./hosts/${hostname}/variables.nix;
+          baseVars = import ./hosts/${hostname}/variables.nix;
+
+          modulesPath = ./hosts/${hostname}/modules.nix;
+          extraVars = if builtins.pathExists modulesPath then import modulesPath else { };
+
+          # 3. Merge
+          hostVars = baseVars // extraVars;
 
           pkgs-unstable = import nixpkgs-unstable {
             system = hostVars.system;
@@ -126,7 +132,15 @@
       makeHome =
         hostname:
         let
-          hostVars = import ./hosts/${hostname}/variables.nix;
+          # 1. Import Mandatory Variables
+          baseVars = import ./hosts/${hostname}/variables.nix;
+
+          # 2. Import Optional Modules (Safely)
+          modulesPath = ./hosts/${hostname}/modules.nix;
+          extraVars = if builtins.pathExists modulesPath then import modulesPath else { };
+
+          # 3. Merge them (Extra overrides Base)
+          hostVars = baseVars // extraVars;
 
           pkgs-unstable = import nixpkgs-unstable {
             system = hostVars.system;
@@ -164,7 +178,15 @@
               monitors
               wallpapers
               idleConfig
-              ;
+              ; # Keep to make the below block working
+
+            hyprlandWorkspaces = hostVars.hyprlandWorkspaces or [ ];
+            kdeMice = hostVars.kdeMice or [ ];
+            kdeTouchpads = hostVars.kdeTouchpads or [ ];
+            waybarWorkspaceIcons = hostVars.waybarWorkspaceIcons or { };
+            waybarLayoutFlags = hostVars.waybarLayoutFlags or { };
+            starshipZshIntegration = hostVars.starshipZshIntegration or true;
+            nixImpure = hostVars.nixImpure or false;
           };
 
           modules = [
@@ -173,6 +195,11 @@
             inputs.plasma-manager.homeModules.plasma-manager
             ./home-manager/modules/wofi
           ]
+
+          ++ (
+            if builtins.pathExists ./hosts/${hostname}/home.nix then [ ./hosts/${hostname}/home.nix ] else [ ]
+          )
+
           ++ (nixpkgs.lib.optionals (hostVars.hyprland or false) [
             ./home-manager/modules/hyprland
             ./home-manager/modules/waybar

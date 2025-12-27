@@ -17,7 +17,6 @@
     # Examples:
     # https://flathub.org/en/apps/com.spotify.Client --> "com.spotify.Client"
     services.flatpak.packages = [
-      "me.iepure.devtoolbox"
     ];
 
     services.flatpak.remotes = [

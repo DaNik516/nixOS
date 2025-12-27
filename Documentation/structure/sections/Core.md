@@ -12,7 +12,7 @@ The brain of the operation. It defines the inputs (Nixpkgs source, Home Manager 
 ## 🖥️ Hosts (`hosts/`)
 This directory contains the configurations for specific machines. Each folder name need to match the name of a `hostname` defined in `flake.nix`.
 
-Each hosts folder should contain these 5 files
+Each hosts folder should contain at least these 7 files
 
 
 * ### `configuration.nix` ###
@@ -25,9 +25,15 @@ Each hosts folder should contain these 5 files
 * An auto-generated file which contains optimization based on the hardware of that specific machine.
 * This file should not be changed unless the user is confident
 
+* ### `home.nix` ###
+* This file specify host-specific settings for that specific hosts
+  * For example on one host the user may want to remove the "public" folder, while on another it may want to have it 
+
 * ### `local-packages.nix` ###
 * Some packages may not be needed in all the machines. For example why installing developing tools when not programming
-  * When the package contains -> ⚠️ KEEP it means that for me they are necessary. Another person if it does not need that specific package it is free to remove it
+
+* ### `modules.nix` ###
+* These is an enhancement of variables.nix. It contains module-specific behavior that should be changed for a more tailored experience 
 
 * ### `variables.nix` ###
 * It is the place where the user change all the aspects that may be host-specific. For example the theming, the username and similar

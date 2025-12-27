@@ -2,6 +2,8 @@
   flake,
   keyboardLayout,
   keyboardVariant,
+  kdeMice,
+  kdeTouchpads,
   ...
 }:
 {
@@ -17,18 +19,7 @@
       numlockOnStartup = "on";
     };
 
-    # 2. MOUSE
-    mice = [
-      {
-        enable = true;
-        name = "Logitech G403";
-        vendorId = "046d"; # Required (Logitech ID)
-        productId = "c08f"; # Required (Logitech G403 ID)
-        acceleration = -1.0;
-        accelerationProfile = "none";
-      }
-    ];
-
-    touchpads = [ ];
+    mice = kdeMice;
+    touchpads = kdeTouchpads;
   };
 }

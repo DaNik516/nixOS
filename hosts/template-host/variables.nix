@@ -14,9 +14,9 @@
   homeStateVersion = "25.11";
 
   # 👤 USER IDENTITY
-  user = "";
-  gitUserName = "";
-  gitUserEmail = "";
+  user = "template-user";
+  gitUserName = "template-user";
+  gitUserEmail = "template-user@example.com";
 
   # 🖥️ DESKTOP ENVIRONMENT
   hyprland = true;
