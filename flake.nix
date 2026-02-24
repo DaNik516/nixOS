@@ -32,6 +32,7 @@
 
           exclude = [
             ./hosts/nixos-laptop/hardware-configuration.nix
+            ./hosts/nixos-laptop/disko-config-btrfs-luks-impermanence.nix
           ];
 
           specialArgs = { inherit inputs moduleSystem; };
