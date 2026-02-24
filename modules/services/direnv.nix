@@ -11,10 +11,10 @@ delib.module {
       nix-direnv.enable = true;
       stdlib = ''
         use_dev_env() {
-          use flake /home/dani/nixOS/users/dani/dev-environments/language-specific/$1
+          use flake /home/dani/nixOS/templates/dev-environments/language-specific/$1
         }
         use_combined_env() {
-          use flake /home/dani/nixOS/users/dani/dev-environments/language-combined/$1
+          use flake /home/dani/nixOS/templates/dev-environments/language-combined/$1
         }
       '';
     };
