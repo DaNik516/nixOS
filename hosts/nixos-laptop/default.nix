@@ -393,6 +393,17 @@ delib.host {
       services.hyprlock.enable = true;
       services.sddm.enable = true;
 
+      services.snapshots = {
+        enable = true;
+        retention = {
+          hourly = "24";
+          daily = "7";
+          weekly = "4";
+          monthly = "3";
+          yearly = "2";
+        };
+      };
+
       services.tailscale.enable = false;
 
       services.hypridle = {
