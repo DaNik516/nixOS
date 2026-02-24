@@ -123,15 +123,15 @@ delib.host {
         };
 
         screenshots = "$HOME/Pictures/Screenshots";
-        keyboardLayout = "it,us";
-        keyboardVariant = "";
+        keyboardLayout = "ch,us";
+        keyboardVariant = "de,";
 
         # 🌟 RESTORED FROM VARIABLES.NIX.BAK
         weather = "Lugano";
         useFahrenheit = false;
         nixImpure = false;
 
-        timeZone = "Etc/UTC+1";
+        timeZone = "Europe/Zurich";
       };
 
       # ---------------------------------------------------------------
@@ -213,8 +213,8 @@ delib.host {
       programs.zoxide.enable = true;
 
       programs.caelestia = {
-        enable = true;
-        enableOnHyprland = false;
+        enable = false;
+        enableOnHyprland = true;
       };
 
       programs.noctalia = {
@@ -226,11 +226,11 @@ delib.host {
       programs.hyprland = {
         enable = true;
         # TODO: configure monitor
-        /*
+        
           monitors = [
-
+"eDP-1,1920x1200,0x0,1.0"
           ];
-        */
+        
         execOnce = [
         ];
         monitorWorkspaces = [
@@ -307,49 +307,19 @@ delib.host {
       programs.niri = {
         enable = true;
         # TODO: configure monitors
-        /*
+        
           outputs = {
-            "DP-1" = {
-              mode = {
-                width = 3840;
-                height = 2160;
-                refresh = 240.0;
-              };
-              scale = 1.5;
-              position = {
-                x = 1440;
-                y = 560;
-              };
-            };
-            "DP-2" = {
-              mode = {
-                width = 3840;
-                height = 2160;
-                refresh = 144.0;
-              };
-              scale = 1.5;
-              position = {
-                x = 0;
-                y = 0;
-              };
-              transform = {
-                rotation = 90;
-                flipped = false;
-              };
-            };
-            "DP-3" = {
-              enable = false;
-            };
-            "HDMI-A-1" = {
+            "eDP-1" = {
               mode = {
                 width = 1920;
-                height = 1080;
+                height = 1200;
                 refresh = 60.0;
               };
-              scale = 1.0;
-            };
+          
           };
-        */
+          };
+          
+        
         execOnce = [
           "${myBrowser}"
           "${myEditor}"
