@@ -212,10 +212,12 @@ delib.host {
 
       programs.zoxide.enable = true;
 
+      /*
       programs.caelestia = {
         enable = false;
         enableOnHyprland = true;
       };
+      */
 
       programs.noctalia = {
         enable = false;
