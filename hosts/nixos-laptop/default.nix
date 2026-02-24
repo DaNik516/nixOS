@@ -123,7 +123,7 @@ delib.host {
         };
 
         screenshots = "$HOME/Pictures/Screenshots";
-        keyboardLayout = "it,en";
+        keyboardLayout = "it,us";
         keyboardVariant = "";
 
         # 🌟 RESTORED FROM VARIABLES.NIX.BAK
@@ -172,7 +172,7 @@ delib.host {
       programs.eza.enable = true;
       programs.fzf.enable = true;
       programs.kitty.enable = true;
-      programs.direnv.enable = true;
+      services.direnv.enable = true;
       programs.dolphin.enable = true;
       programs.neovim.enable = true;
 
