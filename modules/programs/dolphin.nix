@@ -1,17 +1,19 @@
-{ delib
-, pkgs
-, inputs
-, ...
+{
+  delib,
+  pkgs,
+  inputs,
+  ...
 }:
 delib.module {
-  name = "krit.programs.dolphin";
-  options.krit.programs.dolphin = with delib; {
-    enable = boolOption false;
+  name = "programs.dolphin";
+  options.programs.dolphin = with delib; {
+    enable = boolOption true;
   };
 
   home.ifEnabled =
-    { myconfig
-    , ...
+    {
+      myconfig,
+      ...
     }:
     let
       homeDir = "/home/${myconfig.constants.user}";

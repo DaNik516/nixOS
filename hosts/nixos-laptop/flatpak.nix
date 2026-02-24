@@ -1,45 +1,39 @@
-{ delib
-, pkgs
-, inputs
-, ...
+{
+  delib,
+  pkgs,
+  inputs,
+  ...
 }:
 delib.module {
-  name = "krit.services.laptop.flatpak";
-  options.krit.services.laptop.flatpak.enable = delib.boolOption false;
+  name = "dani.services.laptop.flatpak";
+  options.dani.services.laptop.flatpak.enable = delib.boolOption false;
 
   nixos.always = {
     imports = [ inputs.nix-flatpak.nixosModules.nix-flatpak ];
   };
 
-  # Configuration strictly in the nixos hook
-  nixos.ifEnabled =
-    {
-      services.flatpak = {
+  nixos.ifEnabled = {
+    services.flatpak = {
+      enable = true;
+      packages = [
+      ];
+      update.onActivation = false;
+      remotes = [
+        {
+          name = "flathub";
+          location = "https://dl.flathub.org/repo/flathub.flatpakrepo";
+        }
+      ];
+      update.auto = {
         enable = true;
-        packages = [
-          "com.actualbudget.actual"
-          "me.iepure.devtoolbox"
-          "com.github.unrud.VideoDownloader"
-          "com.github.tchx84.Flatseal"
-          "com.usebottles.bottles"
-        ];
-        update.onActivation = false;
-        remotes = [
-          {
-            name = "flathub";
-            location = "https://dl.flathub.org/repo/flathub.flatpakrepo";
-          }
-        ];
-        update.auto = {
-          enable = true;
-          onCalendar = "weekly";
-        };
-      };
-
-      xdg.portal = {
-        enable = true;
-        extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
-        config.common.default = "gtk";
+        onCalendar = "weekly";
       };
     };
+
+    xdg.portal = {
+      enable = true;
+      extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+      config.common.default = "gtk";
+    };
+  };
 }

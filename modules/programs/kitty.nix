@@ -1,10 +1,11 @@
-{ delib
-, lib
-, ...
+{
+  delib,
+  lib,
+  ...
 }:
 delib.module {
-  name = "krit-kitty";
-  options.krit.programs.kitty = with delib; {
+  name = "programs.kitty";
+  options.programs.kitty = with delib; {
     enable = boolOption false;
   };
 

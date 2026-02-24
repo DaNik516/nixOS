@@ -15,7 +15,7 @@
         moduleSystem:
         denix.lib.configurations {
           inherit moduleSystem;
-          homeManagerUser = "krit";
+          homeManagerUser = "dani";
 
           extensions = with denix.lib.extensions; [
             args
@@ -28,23 +28,10 @@
           paths = [
             ./hosts
             ./modules
-            ./packages
-            ./users
           ];
 
           exclude = [
-            ./users/krit/dev-environments
-            ./users/krit/modules/programs/gui-programs/librewolf/profiles
-
-            ./hosts/nixos-desktop/hardware-configuration.nix
             ./hosts/nixos-laptop/hardware-configuration.nix
-            ./hosts/template-host-minimal/hardware-configuration.nix
-            ./hosts/template-host-full/hardware-configuration.nix
-
-            ./hosts/template-host-full/disko-config-btrfs.nix
-            ./hosts/template-host-full/disko-config-btrfs-luks-impermanence.nix
-
-            ./hosts/nixos-laptop/disko-config-btrfs-luks-impermanence.nix
           ];
 
           specialArgs = { inherit inputs moduleSystem; };
