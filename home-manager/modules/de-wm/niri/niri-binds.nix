@@ -206,7 +206,7 @@ in
       "Mod+Period".action.spawn = [
         "walker"
         "-m"
-        "emojis"
+        "symbols"
       ]; # Emoji
 
       "Mod+Shift+P".action.spawn = [

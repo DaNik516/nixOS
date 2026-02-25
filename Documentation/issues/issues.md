@@ -41,7 +41,5 @@ These are the issues that i observed that require attentions. They may be only o
 ## General
 
 
-### Walker emojii keybind `waiting for elephant`
-- While launching the emojii from the launcher it work, but with the keybinds not. It says "waiting for elephant"
 
 ## Krit specific

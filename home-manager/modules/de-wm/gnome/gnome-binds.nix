@@ -67,7 +67,7 @@ let
     }
     {
       name = "Emoji Picker";
-      command = "walker -m emojis";
+      command = "walker -m symbols";
       binding = "<Super>Period";
     }
 

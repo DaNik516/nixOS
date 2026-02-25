@@ -59,7 +59,7 @@ in
 
     "launch-emoji" = {
       key = "Meta+.";
-      command = "walker -m emojis";
+      command = "walker -m symbols";
     };
     "launch-clipboard" = {
       key = "Meta+V";
