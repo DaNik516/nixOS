@@ -124,7 +124,7 @@ delib.host {
 
         screenshots = "$HOME/Pictures/Screenshots";
         keyboardLayout = "ch,us";
-        keyboardVariant = "de,";
+        keyboardVariant = "fr,intl";
 
         # 🌟 RESTORED FROM VARIABLES.NIX.BAK
         weather = "Lugano";
@@ -213,10 +213,10 @@ delib.host {
       programs.zoxide.enable = true;
 
       /*
-      programs.caelestia = {
-        enable = false;
-        enableOnHyprland = true;
-      };
+        programs.caelestia = {
+          enable = false;
+          enableOnHyprland = true;
+        };
       */
 
       programs.noctalia = {
@@ -228,11 +228,11 @@ delib.host {
       programs.hyprland = {
         enable = true;
         # TODO: configure monitor
-        
-          monitors = [
-"eDP-1,1920x1200,0x0,1.0"
-          ];
-        
+
+        monitors = [
+          "eDP-1,1920x1200,0x0,1.0"
+        ];
+
         execOnce = [
         ];
         monitorWorkspaces = [
@@ -309,19 +309,18 @@ delib.host {
       programs.niri = {
         enable = true;
         # TODO: configure monitors
-        
-          outputs = {
-            "eDP-1" = {
-              mode = {
-                width = 1920;
-                height = 1200;
-                refresh = 60.0;
-              };
-          
+
+        outputs = {
+          "eDP-1" = {
+            mode = {
+              width = 1920;
+              height = 1200;
+              refresh = 60.0;
+            };
+
           };
-          };
-          
-        
+        };
+
         execOnce = [
           "${myBrowser}"
           "${myEditor}"
@@ -364,17 +363,6 @@ delib.host {
       services.audio.enable = true;
       services.hyprlock.enable = true;
       services.sddm.enable = true;
-
-      services.snapshots = {
-        enable = true;
-        retention = {
-          hourly = "24";
-          daily = "7";
-          weekly = "4";
-          monthly = "3";
-          yearly = "2";
-        };
-      };
 
       services.tailscale.enable = false;
 
