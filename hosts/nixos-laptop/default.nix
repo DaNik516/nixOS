@@ -389,14 +389,12 @@ delib.host {
     {
       system.stateVersion = "25.11";
       imports = [
-        inputs.disko.nixosModules.disko
 
         inputs.catppuccin.nixosModules.catppuccin
         inputs.nix-sops.nixosModules.sops
         inputs.niri.nixosModules.niri
 
         ./hardware-configuration.nix
-        ./disko-config-btrfs-luks-impermanence.nix
 
       ];
 
