@@ -16,6 +16,7 @@ delib.module {
     services.flatpak = {
       enable = true;
       packages = [
+        "com.jetbrains.IntelliJ-IDEA-Ultimate"
       ];
       update.onActivation = false;
       remotes = [

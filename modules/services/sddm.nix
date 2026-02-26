@@ -1,19 +1,21 @@
-{ delib
-, pkgs
-, lib
-, ...
+{
+  delib,
+  pkgs,
+  lib,
+  ...
 }:
 delib.module {
   name = "services.sddm";
   options = delib.singleEnableOption true;
 
   nixos.ifEnabled =
-    { myconfig
-    , ...
+    {
+      myconfig,
+      ...
     }:
     let
       sddmTheme = pkgs.sddm-astronaut.override {
-        embeddedTheme = "hyprland_kath";
+        embeddedTheme = "pixel_sakura";
         themeConfig = {
           HourFormat = "hh:mm AP";
         };

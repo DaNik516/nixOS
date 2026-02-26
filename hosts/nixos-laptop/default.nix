@@ -92,24 +92,21 @@ delib.host {
         editor = myEditor;
         fileManager = myFileManager;
 
-        # TODO: Configure wallpaper
-        /*
-          wallpapers = [
+        wallpapers = [
 
-              {
-                targetMonitor = "eDP-1";
-                wallpaperURL = "https://raw.githubusercontent.com/nicolkrit999/wallpapers/main/wallpapers/Pictures/wallpapers/various/other-user-github-repos/JoydeepMallick/Wallpapers/Anime-Girl2.png";
-                wallpaperSHA256 = "05ad0c4lm47rh67hsymz0si7x62b7sanz91dsf2vaz68973fq6k6";
-              }
+          {
+            targetMonitor = "eDP-1";
+            wallpaperURL = "https://raw.githubusercontent.com/DaNik516/dotfiles/main/sfondi/Pictures/sfondi/Hoverdam.jpg";
+            wallpaperSHA256 = "0glsgiy62pvi99s1b4kdvw4ydq1h451czk6q4kdmi6in4xgvhq6h";
+          }
 
-              {
-                targetMonitor = "*";
-                wallpaperURL = "https://raw.githubusercontent.com/nicolkrit999/wallpapers/main/wallpapers/Pictures/wallpapers/various/other-user-github-repos/zhichaoh-catppuccin-wallpapers-main/os/nix-black-4k.png";
-                wallpaperSHA256 = "144mz3nf6mwq7pmbmd3s9xq7rx2sildngpxxj5vhwz76l1w5h5hx";
-              }
+          {
+            targetMonitor = "*";
+            wallpaperURL = "https://raw.githubusercontent.com/nicolkrit999/wallpapers/main/wallpapers/Pictures/wallpapers/various/other-user-github-repos/zhichaoh-catppuccin-wallpapers-main/os/nix-black-4k.png";
+            wallpaperSHA256 = "144mz3nf6mwq7pmbmd3s9xq7rx2sildngpxxj5vhwz76l1w5h5hx";
+          }
 
-          ];
-        */
+        ];
 
         # ---------------------------------------------------------------
         # 🎨 THEMING
@@ -162,7 +159,7 @@ delib.host {
         };
       };
 
-      dani.services.laptop.flatpak.enable = false;
+      dani.services.laptop.flatpak.enable = true;
       dani.services.laptop.local-packages.enable = true;
 
       # ---------------------------------------------------------------
@@ -227,7 +224,6 @@ delib.host {
 
       programs.hyprland = {
         enable = true;
-        # TODO: configure monitor
 
         monitors = [
           "eDP-1,1920x1200,0x0,1.0"
@@ -308,7 +304,6 @@ delib.host {
 
       programs.niri = {
         enable = true;
-        # TODO: configure monitors
 
         outputs = {
           "eDP-1" = {
@@ -363,6 +358,17 @@ delib.host {
       services.audio.enable = true;
       services.hyprlock.enable = true;
       services.sddm.enable = true;
+
+      services.snapshots = {
+        enable = true;
+        retention = {
+          hourly = "24";
+          daily = "7";
+          weekly = "4";
+          monthly = "3";
+          yearly = "2";
+        };
+      };
 
       services.tailscale.enable = false;
 
