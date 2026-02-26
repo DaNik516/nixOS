@@ -448,10 +448,10 @@ delib.host {
         ];
       };
 
-      virtualisation.docker.enable = false;
+      virtualisation.docker.enable = true;
       virtualisation.docker.daemon.settings."mtu" = 1450;
       virtualisation.podman = {
-        enable = false;
+        enable = true;
         dockerCompat = false;
       };
 
@@ -482,6 +482,7 @@ delib.host {
       environment.systemPackages = with pkgs; [
         autotrash
         docker
+        distrobox
         fd
         libvdpau-va-gl
         pokemon-colorscripts
