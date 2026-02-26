@@ -10,7 +10,7 @@ delib.module {
       programs.nh = {
         enable = true;
         clean.enable = true;
-        clean.extraArgs = "--keep-since 30d --keep 20";
+        clean.extraArgs = "--keep-since 30d --keep 5"; # If changing the number to keep also make the change in boot.nix;
         flake = "/home/${myconfig.constants.user}/nixOS";
       };
     };
