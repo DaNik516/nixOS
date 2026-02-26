@@ -35,7 +35,7 @@
     - [📦 Cachix support](#-cachix-support)
     - [🧑‍🍳 Denix support](#-denix-support)
     - [🖥️ Multi-architecture support](#️-multi-architecture-support)
-- [🚀 NixOS Installation Guide (dual boot, no disko, ext4, manual partitioning)](#-nixos-installation-guide-dual-boot-no-disko-ext4-manual-partitioning)
+- [🚀 NixOS Installation Guide (dual boot, manual partitioning, btrfs, snapshots and impermenance support)](#-nixos-installation-guide-dual-boot-manual-partitioning-btrfs-snapshots-and-impermenance-support)
   - [📦 Phase 1: Preparation](#-phase-1-preparation)
     - [1. Download \& Flash](#1-download--flash)
     - [2. Boot \& Connect](#2-boot--connect)
@@ -532,15 +532,11 @@ sops updatekeys hosts/nixos-desktop/optional/host-sops-nix/<hostname>-secrets-so
 ---
 
 
-# 🚀 NixOS Installation Guide (dual boot, no disko, ext4, manual partitioning)
+# 🚀 NixOS Installation Guide (dual boot, manual partitioning, btrfs, snapshots and impermenance support)
 
 
 
 > **⚠️ Prerequisite for Dual Booting:** Before starting, boot into Windows, open "Disk Management," right-click your main Windows partition, and select "Shrink Volume." Shrink it to create the desired amount of **Unallocated Space** for NixOS. Leave this space completely unallocated (do not format it in Windows).
-
-- If opting for this route the snapshot feature is lost, you may delete the enabling option in the host `default.nix` and the modules itself `snapshots.nix`.
-  - Keeping the snapshot feature is possible but the partition with btrfs must be done manually ad disko automatically uses all the disk and we don't want that here.
-    - You may look at the `disko-config` and the `snapshots.nix` files to see the right partition layout  
 
 ## 📦 Phase 1: Preparation
 
@@ -599,9 +595,8 @@ We will now create the NixOS partitions in the unallocated space.
 sudo cfdisk /dev/nvme0n1  # Replace with your actual disk name
 
 ```
-
 1. Use the arrow keys to select the **Free space** (this is the unallocated space you made in Windows).
-2. Select **New** and set the size to **`1G`**.
+2. Select **New** and set the size to **`1G`**. (or any size you may want. I suggest anywhere between 1 and 4 GB)
 * **Crucial:** NixOS requires a large boot partition to store multiple system generations. Even if Windows already has an EFI partition, creating a dedicated 1GB EFI partition for NixOS prevents space issues.
 * Change the **Type** of this new partition to **EFI System**.
 
@@ -770,7 +765,7 @@ reboot
 
 ### 1. Download & Flash
 
-1. **Download:** Get the **NixOS Minimal ISO** (64-bit Intel/AMD or 64-bit ARM) from [nixos.org](https://nixos.org/download.html).
+1. **Download:** Get the **NixOS Minimal ISO** (64-bit Intel/AMD) from [nixos.org](https://nixos.org/download.html).
 2. **Flash:** Use **Rufus,balena etcher or similar** to write the ISO to a USB stick.
 
 - **Partition Scheme:** GPT
@@ -798,7 +793,7 @@ We need to fetch the installer template.
 ```bash
 nix-shell -p git
 git clone https://github.com/nicolkrit999/nixOS.git
-cd ~/nixOS
+cd nixOS
 ```
 
 ### 2. Identify Your Disk
@@ -827,7 +822,7 @@ cp -r template-host-full my-computer
 cd my-computer
 ```
 
-Edit the host `default.nix` and add in the `nixos` block the import for the chosen disko-config. Remember to only have one of the 2 imported (depending on the chosen disko config, you may delete the unused one)
+Edit the host `default.nix` and add in the `nixos` block the import for the chosen disko-config. Remember to only have one of the 2 imported
 ```nix
   nixos =
     { ... }:
@@ -847,26 +842,6 @@ Edit the host `default.nix` and add in the `nixos` block the import for the chos
       ];
 ```
 
-Edit the host `flake.nix` to remove any path that does not exist in the hosts folder and add the right hosts disko-config to the exclude block
-
-
-```nix
-exclude = [
-            #./users/krit/dev-environments
-            #./users/krit/modules/programs/gui-programs/librewolf/profiles
-
-           #./hosts/nixos-desktop/hardware-configuration.nix
-           #./hosts/nixos-laptop/hardware-configuration.nix
-            #./hosts/template-host-minimal/hardware-configuration.nix
-            ./hosts/my-computer/hardware-configuration.nix
-
-            # Remember to replace 'my-computer' with the chosen name
-            ./hosts/my-computer/disko-config-btrfs.nix
-            ./hosts/my-computer/disko-config-btrfs-luks-impermanence.nix
-            ./hosts/nixos-laptop/disko-config-btrfs-luks-impermanence.nix
-          ];
-```
-
 ### 4. Configure the Drive
 
 Choose **ONE** of the following methods depending on whether you want encryption.
@@ -877,17 +852,16 @@ Choose **ONE** of the following methods depending on whether you want encryption
 
 1. Open the standard config: `nano disko-config-btrfs.nix`.
 2. Find the line: `device = "/dev/nvme0n1";` and change it to your actual drive name from step 2.
-3. **Save**: `Ctrl+O` -> `Enter` -> `Ctrl+X`.
+3. Change the `boot` partition size as needed. It is reccomended something between 1 and 4 gb depending on the size of the drive. The bigger it is the bigger it can be
+4. **Save**: `Ctrl+O` -> `Enter` -> `Ctrl+X`.
 
 #### Option B: Secure (LUKS + TPM 2.0)
 
 1. Open the encrypted config: `nano disko-config-btrfs-luks-impermanence.nix`.
-
-
 2. Find the linse: `device = "/dev/nvme0n1";` and `nvme0n1 = {` and change them to your actual drive name from step 2.
-
-
-3. **Save**: `Ctrl+O` -> `Enter` -> `Ctrl+X`.
+3. Change the `boot` partition size as needed. It is reccomended something between 1 and 4 gb depending on the size of the drive. The bigger it is the bigger it can be
+4. Change the `swap` size as needed. The less ram you have the lower this value should be. This value should be a bit higher if you want to hybernate
+5. **Save**: `Ctrl+O` -> `Enter` -> `Ctrl+X`.
 
 ### 5a. Configure Critical Variables
 
@@ -912,22 +886,23 @@ Check the documentation [denix starting documentation](#-denix-support). To find
 Run the commands corresponding to the configuration you chose in Step 4.
 
 #### For Option A (Standard):
-- Replace "my-computer as needed"
 
 ```bash
 cd ~/nixOS/hosts/my-computer
 
 # 1. Format the drive (Wipes the drive!)
-sudo nix run github:nix-community/disko -- --mode "destroy,format,mount" ./disko-config-btrfs.nix
+sudo nix run --extra-experimental-features 'nix-command flakes' github:nix-community/disko -- --mode format ./disko-config-btrfs.nix
 
-# 2. Generate Hardware Config
-mkdir -p /tmp/fake-root
+# 2. Mount the drive
+sudo nix run --extra-experimental-features 'nix-command flakes' github:nix-community/disko -- --mode mount ./disko-config-btrfs.nix
 
-sudo nixos-generate-config --root /tmp/fake-root --show-config --no-filesystems > ~/nixOS/hosts/my-computer/hardware-configuration.nix
+# 3. Generate Hardware Config
+nixos-generate-config --no-filesystems --root /mnt --dir .
 
 # 4. Install
 cd ~/nixOS
 sudo nixos-install --flake .#my-computer
+
 ```
 
 #### For Option B (LUKS + TPM):
@@ -936,68 +911,33 @@ sudo nixos-install --flake .#my-computer
 cd ~/nixOS/hosts/my-computer
 
 # 1. Format the drive (Wipes the drive! You will be prompted to create a LUKS password)
-sudo nix run github:nix-community/disko -- --mode "destroy,format,mount" ./disko-config-btrfs-luks-impermanence.nix
+sudo nix run --extra-experimental-features 'nix-command flakes' github:nix-community/disko -- --mode format ./disko-config-btrfs-luks-impermanence.nix
 
-# 2. Generate Hardware Config
-mkdir -p /tmp/fake-root
+# 2. Mount the drive (You will be prompted to enter your new LUKS password)
+sudo nix run --extra-experimental-features 'nix-command flakes' github:nix-community/disko -- --mode mount ./disko-config-btrfs-luks-impermanence.nix
 
-sudo nixos-generate-config --root /tmp/fake-root --show-config --no-filesystems > ~/nixOS/hosts/my-computer/hardware-configuration.nix
+# 3. Generate Hardware Config
+nixos-generate-config --no-filesystems --root /mnt --dir .
 
 # 4. Install
 cd ~/nixOS
 sudo nixos-install --flake .#my-computer
+
 ```
 
 ### 7. Finish
 
 
 
-1. Set your **user password** when prompted.
-   - If not prompted do it manually
-
-```bash
-sudo nixos-enter
-
-# Replace `username` with the right one
-passwd username
-
-# If not prompted to set the root password go to the next step, otherwise run:
-exit
-
-reboot
-```
-
 1. Set your **root password** when prompted.
-   - If not prompted do it manually
-  
-```bash
-passwd
-
-exit
-
-reboot
-```
-
-
 2. **CRITICAL:** Copy your configuration to the new persistent drive before restarting!
 ```bash
-sudo sudo cp -r ~/nixOS /mnt/etc/nixos
+sudo cp -r ~/nixOS /mnt/etc/nixos
 ```
 
+3. Type `reboot` and remove the USB stick.
+4. **(LUKS Only)**: Once you boot into your new system, bind the TPM for auto-unlock:
 
-3. **(LUKS Only)**: Once you boot into your new system, bind the TPM for auto-unlock:
-  - use `lsblk` to find the right partition with the encryption
-
-A sample output could be this
-
-```bash
-nvme0n1
-├─nvme0n1p1  (Boot/ESP)
-└─nvme0n1p2  <-- THIS IS THE PATH YOU USE
-  └─cryptroot (The decrypted container)
-```
-
-Find the right path and replace it in the following command
 ```bash
 sudo systemd-cryptenroll --tpm2-device=auto --tpm2-pcrs=0+7 /dev/nvme0n1p2
 ```
