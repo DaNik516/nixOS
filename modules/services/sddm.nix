@@ -1,0 +1,50 @@
+{ delib
+, pkgs
+, lib
+, ...
+}:
+delib.module {
+  name = "services.sddm";
+  options = delib.singleEnableOption true;
+
+  nixos.ifEnabled =
+    { myconfig
+    , ...
+    }:
+    let
+      sddmTheme = pkgs.sddm-astronaut.override {
+        embeddedTheme = "pixel_sakura";
+        themeConfig = {
+          HourFormat = "hh:mm AP";
+        };
+      };
+    in
+    {
+      services.xserver.enable = true;
+      services.xserver.excludePackages = [ pkgs.xterm ];
+
+      services.displayManager.sddm = {
+        enable = true;
+        wayland.enable = false;
+        package = lib.mkForce pkgs.kdePackages.sddm;
+        theme = "sddm-astronaut-theme";
+
+        extraPackages = with pkgs; [
+          kdePackages.qtsvg # Keep for the theme
+          kdePackages.qtmultimedia # Keep for the theme
+        ];
+      };
+
+      environment.systemPackages = [
+        sddmTheme
+        pkgs.bibata-cursors
+      ];
+
+      services.displayManager.autoLogin = {
+        enable = false;
+        user = myconfig.constants.user;
+      };
+
+      services.getty.autologinUser = null;
+    };
+}

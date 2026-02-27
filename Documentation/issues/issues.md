@@ -35,11 +35,10 @@ These are the issues that i observed that require attentions. They may be only o
 ### Hyprland with caelestia/quickshell: fullscren recording with no audio does not work.
 
 - It does not save it in the right folder
-- This is a known problem
-- Doing with the terminal work
+- This is a known problem and should be related to `gpu-screen-recorder`
+- Activating a fullscreen recording with the terminal work
 
 ## General
 
 
 
-## Krit specific

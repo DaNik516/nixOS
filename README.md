@@ -14,9 +14,7 @@
   - [✨ Features](#-features)
     - [🖥️ Adaptive Host Support:](#️-adaptive-host-support)
       - [Host-specific home-manager modules](#host-specific-home-manager-modules)
-      - [Host-specific home options](#host-specific-home-options)
       - [Host-specific general home-manager modules tweaks](#host-specific-general-home-manager-modules-tweaks)
-    - [📦 Package version and flatpak](#-package-version-and-flatpak)
     - [❄️ Hybrid (declarative + non declarative for some modules)](#️-hybrid-declarative--non-declarative-for-some-modules)
     - [🎨 Theming](#-theming)
     - [🖌️ Wallpaper(s)](#️-wallpapers)
@@ -35,32 +33,44 @@
     - [🦺 Optional BTRFS snapshots](#-optional-btrfs-snapshots)
     - [❔ SOPS-nix support](#-sops-nix-support)
     - [📦 Cachix support](#-cachix-support)
+    - [🧑‍🍳 Denix support](#-denix-support)
     - [🖥️ Multi-architecture support](#️-multi-architecture-support)
-- [🚀 NixOS Installation Guide](#-nixos-installation-guide)
+- [🚀 NixOS Installation Guide (dual boot, manual partitioning, btrfs, snapshots and impermenance support)](#-nixos-installation-guide-dual-boot-manual-partitioning-btrfs-snapshots-and-impermenance-support)
   - [📦 Phase 1: Preparation](#-phase-1-preparation)
     - [1. Download \& Flash](#1-download--flash)
     - [2. Boot \& Connect](#2-boot--connect)
   - [💾 Phase 2: The Terminal Installation](#-phase-2-the-terminal-installation)
     - [1. Download the Config](#1-download-the-config)
+    - [2. Identify the Disk and Unallocated Space](#2-identify-the-disk-and-unallocated-space)
+    - [3. Partition the Drive (cfdisk)](#3-partition-the-drive-cfdisk)
+    - [4. Format and Mount the BTRFS Filesystem](#4-format-and-mount-the-btrfs-filesystem)
+    - [5. Create Your Host](#5-create-your-host)
+    - [6. Configure Critical Variables](#6-configure-critical-variables)
+    - [7. Generate Hardware Config \& Install](#7-generate-hardware-config--install)
+    - [8. Finish](#8-finish)
+- [🚀 NixOS Installation Guide (with disko)](#-nixos-installation-guide-with-disko)
+  - [📦 Phase 1: Preparation](#-phase-1-preparation-1)
+    - [1. Download \& Flash](#1-download--flash-1)
+    - [2. Boot \& Connect](#2-boot--connect-1)
+  - [💾 Phase 2: The Terminal Installation](#-phase-2-the-terminal-installation-1)
+    - [1. Download the Config](#1-download-the-config-1)
     - [2. Identify Your Disk](#2-identify-your-disk)
-    - [3. Create Your Host](#3-create-your-host)
+    - [3. Create Your Host and import the chosen disko-config](#3-create-your-host-and-import-the-chosen-disko-config)
     - [4. Configure the Drive](#4-configure-the-drive)
-    - [5. Configure Critical Variables](#5-configure-critical-variables)
+      - [Option A: Standard (No Encryption)](#option-a-standard-no-encryption)
+      - [Option B: Secure (LUKS + TPM 2.0)](#option-b-secure-luks--tpm-20)
+    - [5a. Configure Critical Variables](#5a-configure-critical-variables)
+    - [5b. Enable suggested modules](#5b-enable-suggested-modules)
     - [6. Install (The Magic Step)](#6-install-the-magic-step)
+      - [For Option A (Standard):](#for-option-a-standard)
+      - [For Option B (LUKS + TPM):](#for-option-b-luks--tpm)
     - [7. Finish](#7-finish)
   - [🎨 Phase 3: Post-Install Setup](#-phase-3-post-install-setup)
     - [1. Move Config to Home](#1-move-config-to-home)
     - [2. (Optional) Cleanup Unused Hosts](#2-optional-cleanup-unused-hosts)
   - [🛠️ Phase 4: Customization](#️-phase-4-customization)
-    - [Refine `variables.nix`](#refine-variablesnix)
-      - [An hosts variable config example:](#an-hosts-variable-config-example)
     - [Setup (optional) `local-packages.nix`](#setup-optional-local-packagesnix)
     - [Setup (optional) `flatpak.nix`](#setup-optional-flatpaknix)
-    - [Setup (optional) `modules.nix`](#setup-optional-modulesnix)
-    - [Setup (optional) `home.nix`](#setup-optional-homenix)
-  - [Phase 5: Setup optional host-specific files and directories](#phase-5-setup-optional-host-specific-files-and-directories)
-    - [1. (Optional) Customize the host-specific `modules.nix`](#1-optional-customize-the-host-specific-modulesnix)
-    - [2. (Optional) Customize the host-specific `home.nix`](#2-optional-customize-the-host-specific-homenix)
   - [🔄 Daily Usage \& Updates](#-daily-usage--updates)
   - [❓ Troubleshooting](#-troubleshooting)
     - [Error: `path '.../hardware-configuration.nix' does not exist`](#error-path-hardware-configurationnix-does-not-exist)
@@ -90,21 +100,15 @@
 
 ### 🖥️ Adaptive Host Support:
 
-Define unique hardware parameters (monitors, theming, keyboard layout, wallpapers, etc) per machine while keeping the core environment identical. All these customized options can be changed in the host-specific directory
+Leverage `denix` to create a customized environments where it's possible to choose the modules to enable and configure their behaviour using `constants` which acts as variables passed to that file logic
 
 - This allow to have a tailored experience right from the start,
-- For reference look point ([5. Configure the host folder](#5-configure-the-hosts-folder)).
-- A variables can be added anytime and it is automatically recognized. Then if it needs to be called it can be simply done by appending `vars.` to the name of the variable
+- For reference look point ([5. Configure the host folder](#5-configure-the-hosts-folder)). TODO: change path to denix usage guide
 
 #### Host-specific home-manager modules
 
-- Inside the host folder it is possible to create home-manager modules. These are modules that unlike local packages can configure with home-manager, but they do not add noise in the general home-manager folder.
-  - This allow to have customized packages but that apply only to certain hosts
+Using the `/Users` folder it's possible to define modules separated from the system-wide one allowing to have highly opinionated and user/host specific modules separated
 
-#### Host-specific home options
-
-- Allow to create home.nix options but that are host-specific
-  - For example on an host you may want to have certain session variables or create/remove specific directories
 
 #### Host-specific general home-manager modules tweaks
 
@@ -113,19 +117,6 @@ Define unique hardware parameters (monitors, theming, keyboard layout, wallpaper
 
 ---
 
-### 📦 Package version and flatpak
-
-Allow the user to define the version of various aspects and decide if some features are enabled:
-
-- `flake.nix`: Nixpkgs stable (unstable is always at the latest)/home-manager/stylix,
-  - These can be changed freely in the future to stay up to date.
-- `variables.nix`: stateVersion/homeStateVersion,
-  - The first time it is a good idea to make them match the rest. However they should not be changed later. Basically they should be set at first build and then be left alone
-- Flatpak (true/false)
-
-To view the latest release numbers refer to the [release notes](https://nixos.org/manual/nixos/stable/release-notes)
-
----
 
 ### ❄️ Hybrid (declarative + non declarative for some modules)
 
@@ -204,7 +195,7 @@ Comment out or remove the specific lines that handles the wallpaper logic
       url = w.wallpaperURL;
       sha256 = w.wallpaperSHA256;
     }
-  ) vars.wallpapers;
+  ) constants.wallpapers;
 
   # 2. Generate 'swww' commands by zipping Monitors with Wallpapers
   wallpaperCommands = lib.imap0 (
@@ -240,7 +231,7 @@ Comment out or remove the specific lines that handles the wallpaper logic
 
 ```nix
 let
-  activeMonitors = builtins.filter (m: !(lib.hasInfix "disable" m)) vars.monitors;
+  activeMonitors = builtins.filter (m: !(lib.hasInfix "disable" m)) constants.monitors;
   monitorPorts = map (m: builtins.head (lib.splitString "," m)) activeMonitors;
 
   wallpaperFiles = map (
@@ -249,7 +240,7 @@ let
       url = wp.wallpaperURL;
       sha256 = wp.wallpaperSHA256;
     }}"
-  ) vars.wallpapers;
+  ) constants.wallpapers;
 
   # If there are more monitors than wallpapers, reuse the last wallpaper
   getWallpaper =
@@ -358,11 +349,11 @@ If your normal user shell fails to log in, follow these steps:
 - **Password:** (Same as your admin user, unless explicitly changed).
 
 2. **Repair the System:**
-   Run the following commands to rebuild the system from the root user. Replace `<your-username>` with your actual folder name (e.g., `krit`).
+   Run the following commands to rebuild the system from the root user. Replace `<your-user>` with your actual folder name (e.g., `krit`).
 
 ```bash
 # 1. Enter the NixOS directory
-cd /home/<your-username>/nixOS
+cd /home/<your-user>/nixOS
 
 # 2. Allow root to access the user's git repo
 nix-shell -p git --command "git config --global --add safe.directory '*'"
@@ -525,6 +516,10 @@ sops updatekeys hosts/nixos-desktop/optional/host-sops-nix/<hostname>-secrets-so
 
 ---
 
+### 🧑‍🍳 Denix support
+- Leverange [denix](https://github.com/yunfachi/denix) to provide a simple way to add, remove, enable/disable modules and their options
+
+---
 ### 🖥️ Multi-architecture support
 
 - It uses smart conditionals to allow support for multiple architectures
@@ -536,7 +531,235 @@ sops updatekeys hosts/nixos-desktop/optional/host-sops-nix/<hostname>-secrets-so
 
 ---
 
-# 🚀 NixOS Installation Guide
+
+# 🚀 NixOS Installation Guide (dual boot, manual partitioning, btrfs, snapshots and impermenance support)
+
+
+
+> **⚠️ Prerequisite for Dual Booting:** Before starting, boot into Windows, open "Disk Management," right-click your main Windows partition, and select "Shrink Volume." Shrink it to create the desired amount of **Unallocated Space** for NixOS. Leave this space completely unallocated (do not format it in Windows).
+
+## 📦 Phase 1: Preparation
+
+### 1. Download & Flash
+
+1. **Download:** Get the **NixOS Minimal ISO** (64-bit Intel/AMD or 64-bit ARM) from [nixos.org](https://nixos.org/download.html). The graphical installer is not needed.
+2. **Flash:** Use **Rufus, Balena Etcher or similar** to write the ISO to a USB stick.
+* **Partition Scheme:** GPT
+* **Target System:** UEFI (non-CSM)
+
+
+3. **BIOS:** Ensure **Secure Boot** is Disabled and your BIOS is set to **UEFI** mode.
+
+### 2. Boot & Connect
+
+1. Insert the USB and boot your computer.
+2. Select **"UEFI: [Your USB Name]"** from the boot menu.
+3. Once the text console loads (`[nixos@nixos:~]$`):
+* **WiFi:** Run `sudo nmtui`, select "Activate a connection", and pick your network.
+* **Ethernet:** Should work automatically. Verify with `ping google.com`.
+
+
+
+---
+
+## 💾 Phase 2: The Terminal Installation
+
+### 1. Download the Config
+
+Fetch the installer template from your repository.
+
+```bash
+nix-shell -p git
+git clone https://github.com/nicolkrit999/nixOS.git
+cd ~/nixOS
+
+```
+
+### 2. Identify the Disk and Unallocated Space
+
+Find your main drive containing the Windows installation and the free space.
+
+```bash
+lsblk
+
+```
+
+* Look for your main disk (e.g., `nvme0n1` or `sda`).
+* You will see your existing Windows partitions. Take note of the disk name.
+
+### 3. Partition the Drive (cfdisk)
+
+We will now create the NixOS partitions in the unallocated space.
+
+```bash
+sudo cfdisk /dev/nvme0n1  # Replace with your actual disk name
+
+```
+1. Use the arrow keys to select the **Free space** (this is the unallocated space you made in Windows).
+2. Select **New** and set the size to **`1G`**. (or any size you may want. I suggest anywhere between 1 and 4 GB)
+* **Crucial:** NixOS requires a large boot partition to store multiple system generations. Even if Windows already has an EFI partition, creating a dedicated 1GB EFI partition for NixOS prevents space issues.
+* Change the **Type** of this new partition to **EFI System**.
+
+
+3. Select the remaining **Free space** again.
+4. Select **New** and press Enter to use the rest of the available space.
+* Keep the **Type** as **Linux filesystem**.
+
+
+5. Select **Write**, type `yes`, and then **Quit**.
+
+Run `lsblk` again to see your new partition numbers (e.g., `/dev/nvme0n1p3` for Boot and `/dev/nvme0n1p4` for Linux).
+
+### 4. Format and Mount the BTRFS Filesystem
+
+*Note: In the commands below, carefully replace `/dev/nvme0n1pX` with your new 1GB EFI partition and `/dev/nvme0n1pY` with your new Linux partition.*
+
+```bash
+### 4. Format and Mount the BTRFS Filesystem
+
+*Note: In the commands below, carefully replace `/dev/nvme0n1pX` with your new 1GB EFI partition and `/dev/nvme0n1pY` with your new Linux partition.*
+
+```bash
+# 1. Format the partitions
+sudo mkfs.fat -F 32 -n BOOT /dev/nvme0n1pX
+
+sudo mkfs.btrfs -L nixos -f /dev/nvme0n1pY
+
+# 2. Mount the root BTRFS partition temporarily
+sudo mount /dev/nvme0n1pY /mnt
+
+# 3. Create flat BTRFS subvolumes (Prepared for Impermanence + Safe Snapshots)
+sudo btrfs subvolume create /mnt/@                 # Root (will be wiped on boot in an impermanence setup)
+
+sudo btrfs subvolume create /mnt/@home             # Home directories
+
+sudo btrfs subvolume create /mnt/@nix              # The Nix store (immutable, must be persistent)
+
+sudo btrfs subvolume create /mnt/@persist          # Impermanence state directory (where you keep files safe from wipes)
+
+sudo btrfs subvolume create /mnt/@var_log          # Persistent logs (crucial for debugging if root is wiped)
+
+sudo btrfs subvolume create /mnt/@swap             # Dedicated subvolume for the swapfile
+
+sudo btrfs subvolume create /mnt/@snapshots        # Safely isolates root snapshots
+
+sudo btrfs subvolume create /mnt/@home_snapshots   # Safely isolates home snapshots
+
+sudo umount /mnt
+
+# 4. Create mount points
+sudo mount -o compress=zstd,noatime,subvol=@ /dev/nvme0n1pY /mnt
+
+sudo mkdir -p /mnt/{home,nix,persist,var/log,swap,boot,.snapshots}
+
+sudo mkdir -p /mnt/home/.snapshots
+
+# 5. Mount the subvolumes properly (matching the Disko config parameters)
+sudo mount -o compress=zstd,noatime,subvol=@home /dev/nvme0n1pY /mnt/home
+
+sudo mount -o compress=zstd,noatime,subvol=@nix /dev/nvme0n1pY /mnt/nix
+
+sudo mount -o compress=zstd,noatime,subvol=@persist /dev/nvme0n1pY /mnt/persist
+
+sudo mount -o compress=zstd,noatime,subvol=@var_log /dev/nvme0n1pY /mnt/var/log
+
+sudo mount -o compress=zstd,noatime,subvol=@snapshots /dev/nvme0n1pY /mnt/.snapshots
+
+sudo mount -o compress=zstd,noatime,subvol=@home_snapshots /dev/nvme0n1pY /mnt/home/.snapshots
+
+# 6. Mount the swap subvolume (Swap should not be compressed)
+sudo mount -o noatime,subvol=@swap /dev/nvme0n1pY /mnt/swap
+
+# 7. Create and activate the Swapfile (Matches your 64G disko setup)
+# Note: You can change '64G' to whatever size matches your RAM needs
+sudo btrfs filesystem mkswapfile --size 64G /mnt/swap/swapfile
+
+sudo swapon /mnt/swap/swapfile
+
+# 8. Mount the boot partition
+sudo mount /dev/nvme0n1pX /mnt/boot
+```
+
+### 5. Create Your Host
+
+Copy the template to a new folder for your machine. Replace `my-computer` with your desired hostname.
+
+```bash
+cd ~/nixOS/hosts
+cp -r template-host-full my-computer
+cd my-computer
+
+```
+
+**Clean up Disko:** Since we partitioned manually, we must remove automated partitioning scripts from the template.
+
+1. Open `default.nix` (`nano default.nix`).
+2. **Remove** `inputs.disko.nixosModules.disko` from the `imports` list.
+3. **Remove** any lines referencing `./disko-config...`.
+4. Open `flake.nix` in the root `~/nixOS` directory, and remove any `.disko-config` paths from the `exclude` block.
+
+### 6. Configure Critical Variables
+
+Still in `default.nix`:
+
+* **`user`**: Change `"template-user"` to your real user.
+* **`homeManagerSystem`**: `x86_64-linux` for Intel/AMD, or `aarch64-linux` for ARM.
+* **Keyboard**: Set `keyboardLayout` and `keyboardVariant` to have an easier time logging in.
+
+### 7. Generate Hardware Config & Install
+
+Because the disks are mounted at `/mnt`, NixOS can automatically detect your BTRFS setup.
+
+```bash
+# 1. Generate Hardware Config based on your manual mounts
+sudo nixos-generate-config --root /mnt
+
+# 2. Copy the generated config to your host folder
+cp /mnt/etc/nixos/hardware-configuration.nix ~/nixOS/hosts/my-computer/
+
+# 3. Add the file to git (CRITICAL: Nix Flakes ignore untracked files)
+cd ~/nixOS
+git add hosts/my-computer/hardware-configuration.nix
+
+# 4. Install the system!
+sudo nixos-install --flake .#my-computer
+
+```
+
+### 8. Finish
+
+1. Set your **user password** when prompted.
+* If not prompted do it manually:
+
+
+
+```bash
+sudo nixos-enter
+passwd your-username
+exit
+
+```
+
+2. Set your **root password** if needed (same steps as above but just `passwd`).
+3. **CRITICAL:** Copy your configuration to the new persistent drive before restarting!
+
+```bash
+sudo cp -r ~/nixOS /mnt/etc/nixos
+
+```
+
+4. Reboot!
+
+```bash
+reboot
+
+```
+
+*(Once rebooted, select NixOS from the GRUB menu. Windows will automatically be detected by OSProber and added to your boot list!).*
+
+
+
+# 🚀 NixOS Installation Guide (with disko)
 
 ## 📦 Phase 1: Preparation
 
@@ -578,96 +801,156 @@ cd nixOS
 We must identify which drive to wipe. **Be careful here.**
 
 ```bash
-lsblk
+lsblk -o NAME,SIZE,FSAVAIL
 ```
 
-- Look for your main disk (e.g., `476G` or `931G`).
-- Note the name: usually **`nvme0n1`** (for SSDs) or **`sda`**.
+* Look for your main disk (e.g., `476G` or `931G`).
 
-### 3. Create Your Host
+
+* Note the name: usually **`nvme0n1`** (for SSDs) or **`sda`**.
+
+
+
+### 3. Create Your Host and import the chosen disko-config
 
 Copy the template to a new folder for your machine. Replace `my-computer` with your desired hostname.
-
-- The template include only a few enabled options, allowing a smaller and faster installation.
-- Only the following features are enabled:
-  - hyprland
-  - alacritty as default terminal
-  - firefox as default browser
-  - vscode as default code editor
-  - dolphin as default file manager
-  - nord dark theme
-  - us international keyboard layout
+You may choose between copying the `minimal` or the `full` template host
 
 ```bash
 cd hosts
-cp -r template-host my-computer
+cp -r template-host-full my-computer
 cd my-computer
+```
+
+Edit the host `default.nix` and add in the `nixos` block the import for the chosen disko-config. Remember to only have one of the 2 imported
+```nix
+  nixos =
+    { ... }:
+    {
+      nixpkgs.hostPlatform = "x86_64-linux";
+      system.stateVersion = "25.11";
+      imports = [
+        inputs.disko.nixosModules.disko
+        inputs.catppuccin.nixosModules.catppuccin
+        #inputs.nix-sops.nixosModules.sops # Tough an import does not cause the build to fail it's removed for lightness. Enable if used
+        inputs.niri.nixosModules.niri
+
+        ./hardware-configuration.nix
+        
+        #./disko-config-btrfs.nix
+        #./disko-config-btrfs-luks-impermanence.nix
+      ];
 ```
 
 ### 4. Configure the Drive
 
-Tell the installer which disk to wipe.
+Choose **ONE** of the following methods depending on whether you want encryption.
+- Both disko-config sample are under ~/nixOS/hosts/template-host-full
+  - Remember to copy them to your chosen host folder 
 
-```bash
-nano disko-config.nix
-```
+#### Option A: Standard (No Encryption)
 
-- Find the line: `device = "/dev/nvme0n1";`
-- Change it to **your actual drive name** found in step 2.
-- **Save:** `Ctrl+O` -> `Enter` -> `Ctrl+X`
+1. Open the standard config: `nano disko-config-btrfs.nix`.
+2. Find the line: `device = "/dev/nvme0n1";` and change it to your actual drive name from step 2.
+3. Change the `boot` partition size as needed. It is reccomended something between 1 and 4 gb depending on the size of the drive. The bigger it is the bigger it can be
+4. **Save**: `Ctrl+O` -> `Enter` -> `Ctrl+X`.
 
-### 5. Configure Critical Variables
+#### Option B: Secure (LUKS + TPM 2.0)
+
+1. Open the encrypted config: `nano disko-config-btrfs-luks-impermanence.nix`.
+2. Find the linse: `device = "/dev/nvme0n1";` and `nvme0n1 = {` and change them to your actual drive name from step 2.
+3. Change the `boot` partition size as needed. It is reccomended something between 1 and 4 gb depending on the size of the drive. The bigger it is the bigger it can be
+4. Change the `swap` size as needed. The less ram you have the lower this value should be. This value should be a bit higher if you want to hybernate
+5. **Save**: `Ctrl+O` -> `Enter` -> `Ctrl+X`.
+
+### 5a. Configure Critical Variables
 
 We only need to set the basics now. You can customize themes and wallpapers later in the GUI.
 
 ```bash
-nano variables.nix
+nano default.nix
 ```
 
-- **`user`**: Change `"template-user"` to your real username.
-- **⚠️ CRITICAL:** Do not install as `template-user` and try to rename it later. You will lose access to your home folder. Set your real username **NOW**.
-- **`system`**: The template is `x86_64-linux`. If you have a newer arm-based pc then `aarch_64`
+* **`user`**: Change `"template-user"` to your real user.
+* **⚠️ CRITICAL**: Do not install as `template-user` and try to rename it later. Set your real user **NOW**.
+* **`homeManagerSystem`**: The template is `x86_64-linux`. If you have a newer ARM-based PC then `aarch64-linux`.
+* **Keyboard**: Set `keyboardLayout` (e.g., `"us,it"`) and `keyboardVariant` (e.g., `"intl,,"`) to have an easier time to login and user  the terminal right from teh beginning
 
-You may also want to configure the keyboard. If you don't have us international you may boot into a wrong layout. Below there is an example with multiple layouts
+### 5b. Enable suggested modules
 
-```nix
- keyboardLayout = "us,ch,de,fr,it"; # 5 different layouts
-  keyboardVariant = "intl,,,,"; # main variant + 4 commas (total 5 values, same as keyboardLayout)
-```
+Check the documentation [denix starting documentation](#-denix-support). To find a descriptions of possible modules that are available and check `template-host-full-default.nix` for suggested modules (one that have a `enable = true;` block)
 
-- You will notice default settings for the monitor and a default wallpaper (either black or the default one of the de/wm you chose). This is expected because the `monitors` variable is not defined yet and the wallpaper logic rely on it.
+---
 
 ### 6. Install (The Magic Step)
+Run the commands corresponding to the configuration you chose in Step 4.
 
-Run these three commands to format the drive and install the OS.
+#### For Option A (Standard):
 
 ```bash
-# 1. Partition & Mount (Wipes the drive!)
-sudo nix run --extra-experimental-features 'nix-command flakes' github:nix-community/disko -- --mode disko ~/nixOS/hosts/template-host/disko-config.nix
+cd ~/nixOS/hosts/my-computer
 
-# 2. Generate Hardware Config (Captures CPU/Kernel quirks)
-nixos-generate-config --no-filesystems --root /mnt --dir /etc/nixos/hosts/<hostname>
+# 1. Format the drive (Wipes the drive!)
+sudo nix run --extra-experimental-features 'nix-command flakes' github:nix-community/disko -- --mode format ./disko-config-btrfs.nix
 
-# 3. Install
-cd /etc/nixos  # Go back to the repo root
+# 2. Mount the drive
+sudo nix run --extra-experimental-features 'nix-command flakes' github:nix-community/disko -- --mode mount ./disko-config-btrfs.nix
 
-# If for some reason you need the impure flag just add it at the end of the following command
-nixos-install --flake .<hostname>
+# 3. Generate Hardware Config
+nixos-generate-config --no-filesystems --root /mnt --dir .
+
+# 4. Install
+cd ~/nixOS
+sudo nixos-install --flake .#my-computer
+
+```
+
+#### For Option B (LUKS + TPM):
+
+```bash
+cd ~/nixOS/hosts/my-computer
+
+# 1. Format the drive (Wipes the drive! You will be prompted to create a LUKS password)
+sudo nix run --extra-experimental-features 'nix-command flakes' github:nix-community/disko -- --mode format ./disko-config-btrfs-luks-impermanence.nix
+
+# 2. Mount the drive (You will be prompted to enter your new LUKS password)
+sudo nix run --extra-experimental-features 'nix-command flakes' github:nix-community/disko -- --mode mount ./disko-config-btrfs-luks-impermanence.nix
+
+# 3. Generate Hardware Config
+nixos-generate-config --no-filesystems --root /mnt --dir .
+
+# 4. Install
+cd ~/nixOS
+sudo nixos-install --flake .#my-computer
+
 ```
 
 ### 7. Finish
 
-1. Set your **root password** when prompted at the end. Note the password is not displayed while typing
-2. Type `reboot` and remove the USB stick.
 
----
+
+1. Set your **root password** when prompted.
+2. **CRITICAL:** Copy your configuration to the new persistent drive before restarting!
+```bash
+sudo cp -r ~/nixOS /mnt/etc/nixos
+```
+
+3. Type `reboot` and remove the USB stick.
+4. **(LUKS Only)**: Once you boot into your new system, bind the TPM for auto-unlock:
+
+```bash
+sudo systemd-cryptenroll --tpm2-device=auto --tpm2-pcrs=0+7 /dev/nvme0n1p2
+```
+
+* This command can be run to re-bind if needed (such as after a motherboard change)
+
+
 
 ## 🎨 Phase 3: Post-Install Setup
 
 Congratulations! You are now logged into your new NixOS desktop.
 
-- After installing the cosmic de setup dialog (if you enabled it) can appear. Either configure it regardless of which de you are on or close it
-- If for any reason alacritty does not open `foot` is available and it's sure to work because it does not require any particular configuration
+- After installing the cosmic de setup dialog (if you enabled it) can appear (if you enabled cosmic) even if not inside cosmic itself. Either configure it regardless of which de you are on or close it. This is only a one time thing
 
 ### 1. Move Config to Home
 
@@ -737,211 +1020,6 @@ _Example input: `my-computer` (This will delete every host except this one)._
 
 ## 🛠️ Phase 4: Customization
 
-### Refine `variables.nix`
-
-- Not all variables are mandatory
-  - If a variable is missing one of these things will happen
-    - The feature is disabled
-    - The feature is ignored
-    - A fallback apply
-  * `system` (mandatory): The architecture to use.
-  * `stateVersion` & `homeStateVersion` (optional): Keeps your config stable (e.g., `25.11`).
-    - During the first installation it is a good idea to make them the same as the other versions (or the latest available)
-      Later where other version may be updated these 2 should not be changed, meaning they should remain what they were at the beginning
-      These 2 versions define where there system was created, and keeping them always the same it is a better idea
-
-  * `user` (mandatory: The desired username)
-
-  * `gitUserName` (optional): Github user name.
-  * `gitUserEmail` (optional): Github user e-mail.
-  * `hyprland` (optional): Whatever to enable hyprland or not
-
-  * `niri` (optional): Whatever to enable niri or not
-
-  * `gnome` (optional): Whatever to enable gnome or not
-
-  * `kde` (optional): Whatever to enable kde or not
-
-  * `cosmic` (optional): Whatever to enable cosmic or not
-
-  * `hyprlandCaelestia` (optional): Whatever to enable caelestia shell in hyprland
-  * `hyprlandNoctalia` (optional): Whatever to enable noctalia shell in hyprland
-
-  * `niriNoctalia` (optional): Whatever to enable noctalia shell in niri
-  * `flatpak` (optional): Whatever to enable support for flatpak
-  * `term` (optional): Default terminal, used for keybindings and tmux
-    - Depending on the terminal it may be necessary to add an entry `set -as` to `tmux.nix`. This is necessary to tell tmux that the current terminal support full colors.
-
-  For example:
-
-  ```nix
-  set -as terminal-features ",xterm-kitty:RGB"
-  ```
-
-  - `shell` (optional): The preferred shell for the user. Options are:
-    - fish
-    - bash
-    - zsh
-
-  - `browser` (optional): Default browser. To make sure it work 100 write the name of the official package. Common options are the following (they match an existing package name)
-    - google-chrome
-    - firefox
-    - chromium
-
-  - `editor` (optional): Default text/code editorTo make sure it work 100 write the name of the official package. Common options are the following (they match an existing package name except for neovim)
-    - vscode
-    - code
-    - code-cursor
-    - nvim (use "nvim" it make launching it easier. the expected name "neovim" is automatically translated in home-packages.nix)
-    - vim
-    - emacs
-    - sublime
-    - kate
-    - gedit
-
-  - `fileManager` (optional): Default file manager. To make sure it work 100 write the name of the official package. Common options are the following (they match an existing package name)
-    - dolphin (the pkgs.kdePackages portion is already handled. write only `dolphin`)
-    - xfce.thunar
-    - ranger
-    - nautilus
-    - nemo
-
-  - `base16Theme` (mandatory): which base 16 theme to use
-    - Reference https://github.com/tinted-theming/schemes/tree/spec-0.11/base16
-  - `polarity` (mandatory): Decide whatever to have a light or a dark theme in stylix.nix
-    - This should make sense with the global base16 themes. This means a dark-coloured global theme should have a dark polarity and vice-versa
-    - Currently it is used in the following files:
-      - `qt.nix`, `kde/main.nix`
-  - `catppuccin` (optional): Whatever to enable catppuccin theming or not. If disabled all the theming is done via the base theme. Note that some modules may require attention in order to be fully customized. For more information see [(the catppuccin features)](#-theming)
-  - `catppuccinFlavor` (optional): What catppuccin flavor to use
-    - the flavor name should be all lowercase. frappé needs to be written without accent so frappe
-  - `catppuccinAccent` (optional): What catppuccin Accent to use
-
-  - `timezone` (optional): Your system time zone (e.g., `Europe/Zurich`).
-    - To choose the timezone refer to the [(IANA time zone database)](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
-  - `weather` (optional): Location for the weather widget (e.g., `Lugano`).
-  - `keyboardLayout` (optional): Single or list of keyboard layout
-  - `keyboardVariant` (optional): Keyboard variant
-    - If more layout are defined a comma is needed for each layout except the first one. For example:
-
-```nix
- keyboardLayout = "us,ch,de,fr,it"; # 5 different layouts
-  keyboardVariant = "intl,,,,"; # main variant + 4 commas (total 5 values, same as keyboardLayout)
-```
-
-- `screenshots` (mandatory): Setup the preferred directory where screenshots are put
-  - Currently the path and shortcuts only work in hyprland and kde
-
-- `snapshots` (optional): Whatever to enable snapshots or not
-
-- `snapshotRetention` (optional): How many snapshots to keep for a certain period
-
-- `tailscale` (optional): Whatever to enable or disable the tailscale service.
-  - "guest" user has this service disabled using a custom firewall rules in configuration.nix (host-specific)
-
-- `guest` (optional): Whatever to enable or disable the guest user.
-
-- `zramPercent` (optional): Ram swap to enhance system performance.
-
-- `monitors` (mandatory): List of monitor definitions (resolution, refresh rate, position).
-  - For a guide on how to set it up refer to the [(hyprland guide)](https://wiki.hypr.land/Configuring/Monitors/)
-
-- `wallpapers` (mandatory) : List of wallpapers corresponding to the monitors.
-  - **How to get the values:**
-  1. **`wallpaperURL`**: Nix requires a direct link to the raw image file. If using GitHub, standard links won't work. Copy your GitHub link and paste it into [(git-rawify)](https://git-rawify.vercel.app/) to get the correct "Raw" URL.
-  2. **`wallpaperSHA256 (mandatory)`**: Generate the hash by running this command in your terminal:
-  - **Troubleshooting URLs**:
-    If your URL contains special characters (like `%20` for spaces), the command might fail or return an "invalid character" error. To fix this, **wrap the URL in single quotes**:
-  - ❌ _Fail:_ `nix-prefetch-url https://example.com/my%20wallpaper.png`
-  - ✅ _Success:_ `nix-prefetch-url 'https://example.com/my%20wallpaper.png'`
-
-```bash
-nix-prefetch-url <your_raw_url>
-```
-
-- `idleConfig` (optional) : Power management settings (timeouts for dimming, locking, sleeping).
-
-- `cachix` (optional): Whatever to enable cachix or not
-  - For a third user to be a builder the following steps must be followed:
-    - Fork/clone the repo locally. This is needed because third user do not have write access nor to the repo runners nor to my cachix cache
-    1. Change both `name` and `publicKey` in `variables.nix` with the new data
-    2. Put the `cachix-auth-token` in the host-specific sops file
-    3. Change `CACHIX_name` in `build.yml`. This automatically change the name in the entire build file
-    4. Add the general cachix profile auth token to github actions in the repo page. The name of the secret is`CACHIX_AUTH_TOKEN`
-
-#### An hosts variable config example:
-
-```nix
-{
-  hostname = "template-host";
-  system = "x86_64-linux";
-
-  stateVersion = "25.11";
-  homeStateVersion = "25.11";
-
-  user = "template-user";
-  gitUserName = "template-user";
-  gitUserEmail = "template-user@example.com";
-
-  hyprland = true;
-  caelestia = false;
-
-  gnome = false;
-  kde = false;
-  cosmic = false;
-
-  flatpak = false;
-  term = "alacritty";
-  shell = "fish";
-
-  browser = "firefox";
-  editor = "code";
-  fileManager = "dolphin";
-
-  base16Theme = "nord";
-  polarity = "dark";
-  catppuccin = false;
-  catppuccinFlavor = "mocha";
-  catppuccinAccent = "sky";
-
-  timeZone = "UTC";
-  weather = "Greenwich";
-  keyboardLayout = "us";
-  keyboardVariant = "intl";
-
-  screenshots = "$HOME/Pictures/screenshots";
-
-  tailscale = false;
-  guest = false;
-  zramPercent = 25;
-
-  monitors = [
-  ];
-
-  wallpapers = [
-    {
-      wallpaperURL = "https://raw.githubusercontent.com/zhichaoh/catppuccin-wallpapers/refs/heads/main/os/nix-black-4k.png";
-      wallpaperSHA256 = "144mz3nf6mwq7pmbmd3s9xq7rx2sildngpxxj5vhwz76l1w5h5hx";
-    }
-  ];
-
-  idleConfig = {
-    enable = true;
-    dimTimeout = 600;
-    lockTimeout = 1800;
-    screenOffTimeout = 3600;
-    suspendTimeout = 7200;
-  };
-
-   # Cachix
-  cachix = {
-    enable = true;
-    push = false;
-    name = "krit-nixos";
-    publicKey = "krit-nixos.cachix.org-1:54bU6/gPbvP4X+nu2apEx343noMoo3Jln8LzYfKD7ks=";
-  };
-}
-```
 
 ### Setup (optional) `local-packages.nix`
 
@@ -953,46 +1031,6 @@ nix-prefetch-url <your_raw_url>
 - It contains flatpak packages that are intended to only be installed in that specific hosts
   - add as needed
 
-### Setup (optional) `modules.nix`
-
-This file contains specific "Power User" configurations and aesthetic tweaks that may vary significantly between machines (e.g., desktop vs. laptop).
-
-- See below for a guide
-
-### Setup (optional) `home.nix`
-
-This file contains specific home-manager aspects that are related only to a certain host. It complement well the global home.nix
-
-- See below for a guide
-
-
-## Phase 5: Setup optional host-specific files and directories
-
-### 1. (Optional) Customize the host-specific `modules.nix`
-
-To see currently supported options have a look at the file for the hostname `nixos-desktop`
-
-- **How it works**: The system checks if this file exists. If it does, it merges these variables with your main configuration.
-  - The file is included in the template-host, with a sample configuration. This provide a starting base. If not needed it can be deleted at any moment and all the fallback will apply
-- **The Safety Net**: If this file is missing (or if you omit specific variables), the system applies a **safe fallback**. This ensures the build never fails, even if you don't define these complex options.
-
-- If you add any option then ideally a fallback should be defined in the target nix file
-
----
-
-### 2. (Optional) Customize the host-specific `home.nix`
-
-This file allows you to manage user-specific configurations that should **only** apply to the current machine. Unlike `local-packages.nix` (which installs system-wide packages), this file uses Home Manager, allowing you to configure dotfiles, environment variables, and symlinks.
-
-**Common Use Cases:**
-
-| Feature                     | Description                                                                                     | Example Usage                                                                               |
-| --------------------------- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| **`home.packages`**         | Installs packages for the user only on this host. It also include a block for unstable packages | Installing `blender` or `gimp` only on a powerful desktop PC.                               |
-| **`xdg.userDirs`**          | Overrides the default `~/` folders.                                                             | Hiding unused folders like `~/Public` or `~/Templates` on a laptop.                         |
-| **`home.file`**             | Links a package or file to a specific path.                                                     | Linking `jdtls` to `~/tools/jdtls` so your Neovim config works the same across all distros. |
-| **`home.sessionVariables`** | Defines shell variables for this host only.                                                     | Setting `JAVA_HOME` or `JDTLS_BIN` only on machines used for development.                   |
-| **`home.activation`**       | Activate certain functions such as creating customs folders                                     | Make sure certain directories exist only for that host                                      |
 
 
 
@@ -1035,7 +1073,7 @@ home-manager switch
 **Fix:** Fix ownership:
 
 ```bash
-# This smart command automatically fetch the username so no changes are needed
+# This smart command automatically fetch the user so no changes are needed
 sudo chown -R $USER:users ~/nixOS
 ```
 
