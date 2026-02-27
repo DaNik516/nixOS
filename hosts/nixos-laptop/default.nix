@@ -88,8 +88,8 @@ delib.host {
         # ---------------------------------------------------------------
         terminal = myTerminal;
         shell = myShell;
-        browser = myBrowser;
-        editor = myEditor;
+        browser = "google-chrome";
+        editor = "code";
         fileManager = myFileManager;
 
         wallpapers = [
@@ -209,12 +209,10 @@ delib.host {
 
       programs.zoxide.enable = true;
 
-      /*
         programs.caelestia = {
-          enable = false;
+          enable = true;
           enableOnHyprland = true;
         };
-      */
 
       programs.noctalia = {
         enable = false;
@@ -520,6 +518,12 @@ delib.host {
         # Input home manager here to bypass "function home" and "attributes hm missing" evaluation errors
         createHostDirs = inputs.home-manager.lib.hm.dag.entryAfter [ "writeBoundary" ] ''
           mkdir -p $HOME/Pictures/sfondi
+         mkdir -p $HOME/momentanee
+         mkdir -p $HOME/github_repos
+         mkdir -p $HOME/github_repos/personali
+         mkdir -p $HOME/github_repos/forks
+         mkdir -p $HOME/github_repos/momentanee
+
         '';
       };
     };
