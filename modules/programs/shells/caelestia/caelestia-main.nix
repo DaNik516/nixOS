@@ -73,7 +73,7 @@ delib.module {
         export WAYLAND_DISPLAY="wayland-1"
 
         set -euo pipefail
-        HM_PROFILE="${config.home.profileDirectory}"
+        HM_PROFILE=" /etc/profiles/per-user/${myconfig.constants.user}"
 
         # 3. Unset conflicting vars
         unset QT_QUICK_CONTROLS_STYLE
@@ -143,7 +143,8 @@ delib.module {
           cp ${
             pkgs.fetchurl {
               url = "https://github.com/google/material-design-icons/raw/master/variablefont/MaterialSymbolsRounded%5BFILL%2CGRAD%2Copsz%2Cwght%5D.ttf";
-              sha256 = "sha256-1xnyL97ifjRLB+Rub6i1Cx/OPPywPUqE8D+vvwgS/CI=";
+              name = "MaterialSymbolsRounded.ttf";
+              sha256 = "077l66sb5v0nap9yczkvm9szfx7qx05svysx47kf1d9g3slcw11v";
             }
           } $out/share/fonts/truetype/MaterialSymbolsRounded.ttf
         '')
