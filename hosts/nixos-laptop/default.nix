@@ -1,14 +1,12 @@
-{
-  delib,
-  inputs,
-  pkgs,
-  ...
+{ delib
+, inputs
+, pkgs
+, ...
 }:
 let
   pkgs-unstable = inputs.nixpkgs-unstable.legacyPackages.${pkgs.stdenv.hostPlatform.system};
   # 🌟 CORE APPS & THEME
-  myBrowser = "google-chrome";
-  myBrowserCmd = if myBrowser == "google-chrome" then "google-chrome-stable" else myBrowser;
+  myBrowser = "google-chrome-stable";
   myTerminal = "kitty";
   myShell = "zsh";
   myEditor = "vscode";
@@ -47,7 +45,7 @@ let
   desktopMap = {
     "firefox" = "firefox.desktop";
     "librewolf" = "librewolf.desktop";
-    "google-chrome" = "google-chrome.desktop";
+    "google-chrome-stable" = "google-chrome.desktop";
     "chromium" = "chromium-browser.desktop";
     "brave" = "brave-browser.desktop";
     "nvim" = "custom-nvim.desktop";
@@ -89,7 +87,7 @@ delib.host {
         # ---------------------------------------------------------------
         terminal = myTerminal;
         shell = myShell;
-        browser = myBrowserCmd;
+        browser = myBrowser;
         editor = "code";
         fileManager = myFileManager;
 
@@ -210,10 +208,10 @@ delib.host {
 
       programs.zoxide.enable = true;
 
-        programs.caelestia = {
-          enable = false;
-          enableOnHyprland = false;
-        };
+      programs.caelestia = {
+        enable = true;
+        enableOnHyprland = true;
+      };
 
       programs.noctalia = {
         enable = false;
@@ -297,7 +295,7 @@ delib.host {
         extraBinds = [
           "$Mod SHIFT, return, exec, [workspace special:magic] $term --class scratch-term"
           "$Mod SHIFT, F, exec, [workspace special:magic] $term --class scratch-fs -e yazi"
-          "$Mod SHIFT, B, exec, [workspace special:magic] ${myBrowserCmd} --new-window --class scratch-browser"
+          "$Mod SHIFT, B, exec, [workspace special:magic] ${myBrowser} --new-window --class scratch-browser"
         ];
       };
 
@@ -316,7 +314,7 @@ delib.host {
         };
 
         execOnce = [
-          "${myBrowserCmd}"
+          "${myBrowser}"
           "${myEditor}"
           "${myFileManager}"
           "${myTerminal}"
@@ -346,8 +344,7 @@ delib.host {
           (resolve myEditor)
           (resolve myFileManager)
         ];
-        extraBinds = {
-        };
+        extraBinds = { };
 
       };
 
@@ -380,8 +377,7 @@ delib.host {
 
       services.swaync = {
         enable = true;
-        customSettings = {
-        };
+        customSettings = { };
       };
 
     };
@@ -392,6 +388,14 @@ delib.host {
   nixos =
     { ... }:
     {
+      nixpkgs.overlays = [
+        (final: prev: {
+          google-chrome-stable = prev.google-chrome;
+        })
+      ];
+
+
+
       system.stateVersion = "25.11";
       imports = [
 
@@ -498,10 +502,16 @@ delib.host {
   # 🏠 USER-LEVEL CONFIGURATIONS
   # ---------------------------------------------------------------
   home =
-    {
-      ...
+    { ...
     }:
     {
+
+
+      nixpkgs.overlays = [
+        (final: prev: {
+          google-chrome-stable = prev.google-chrome;
+        })
+      ];
       home.stateVersion = "25.11";
       imports = [
 
@@ -518,12 +528,12 @@ delib.host {
       home.activation = {
         # Input home manager here to bypass "function home" and "attributes hm missing" evaluation errors
         createHostDirs = inputs.home-manager.lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-          mkdir -p $HOME/Pictures/sfondi
-         mkdir -p $HOME/momentanee
-         mkdir -p $HOME/github_repos
-         mkdir -p $HOME/github_repos/personali
-         mkdir -p $HOME/github_repos/forks
-         mkdir -p $HOME/github_repos/momentanee
+           mkdir -p $HOME/Pictures/sfondi
+          mkdir -p $HOME/momentanee
+          mkdir -p $HOME/github_repos
+          mkdir -p $HOME/github_repos/personali
+          mkdir -p $HOME/github_repos/forks
+          mkdir -p $HOME/github_repos/momentanee
 
         '';
       };

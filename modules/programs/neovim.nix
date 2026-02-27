@@ -1,8 +1,7 @@
-{
-  delib,
-  pkgs,
-  lib,
-  ...
+{ delib
+, pkgs
+, lib
+, ...
 }:
 delib.module {
   name = "programs.neovim";
@@ -10,9 +9,8 @@ delib.module {
     enable = boolOption true;
   };
   home.ifEnabled =
-    {
-      myconfig,
-      ...
+    { myconfig
+    , ...
     }:
     {
       xdg.desktopEntries.custom-nvim = lib.mkForce {

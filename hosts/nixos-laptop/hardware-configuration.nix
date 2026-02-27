@@ -5,7 +5,8 @@
 
 {
   imports =
-    [ (modulesPath + "/installer/scan/not-detected.nix")
+    [
+      (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "thunderbolt" "nvme" "usb_storage" "sd_mod" ];
@@ -14,55 +15,64 @@
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/fdff7dca-cb4b-4792-8426-daf472ae6227";
+    {
+      device = "/dev/disk/by-uuid/fdff7dca-cb4b-4792-8426-daf472ae6227";
       fsType = "btrfs";
       options = [ "subvol=@" ];
     };
 
   fileSystems."/home" =
-    { device = "/dev/disk/by-uuid/fdff7dca-cb4b-4792-8426-daf472ae6227";
+    {
+      device = "/dev/disk/by-uuid/fdff7dca-cb4b-4792-8426-daf472ae6227";
       fsType = "btrfs";
       options = [ "subvol=@home" ];
     };
 
   fileSystems."/nix" =
-    { device = "/dev/disk/by-uuid/fdff7dca-cb4b-4792-8426-daf472ae6227";
+    {
+      device = "/dev/disk/by-uuid/fdff7dca-cb4b-4792-8426-daf472ae6227";
       fsType = "btrfs";
       options = [ "subvol=@nix" ];
     };
 
   fileSystems."/persist" =
-    { device = "/dev/disk/by-uuid/fdff7dca-cb4b-4792-8426-daf472ae6227";
+    {
+      device = "/dev/disk/by-uuid/fdff7dca-cb4b-4792-8426-daf472ae6227";
       fsType = "btrfs";
       options = [ "subvol=@persist" ];
     };
 
   fileSystems."/var/log" =
-    { device = "/dev/disk/by-uuid/fdff7dca-cb4b-4792-8426-daf472ae6227";
+    {
+      device = "/dev/disk/by-uuid/fdff7dca-cb4b-4792-8426-daf472ae6227";
       fsType = "btrfs";
       options = [ "subvol=@var_log" ];
     };
 
   fileSystems."/.snapshots" =
-    { device = "/dev/disk/by-uuid/fdff7dca-cb4b-4792-8426-daf472ae6227";
+    {
+      device = "/dev/disk/by-uuid/fdff7dca-cb4b-4792-8426-daf472ae6227";
       fsType = "btrfs";
       options = [ "subvol=@snapshots" ];
     };
 
   fileSystems."/home/.snapshots" =
-    { device = "/dev/disk/by-uuid/fdff7dca-cb4b-4792-8426-daf472ae6227";
+    {
+      device = "/dev/disk/by-uuid/fdff7dca-cb4b-4792-8426-daf472ae6227";
       fsType = "btrfs";
       options = [ "subvol=@home_snapshots" ];
     };
 
   fileSystems."/swap" =
-    { device = "/dev/disk/by-uuid/fdff7dca-cb4b-4792-8426-daf472ae6227";
+    {
+      device = "/dev/disk/by-uuid/fdff7dca-cb4b-4792-8426-daf472ae6227";
       fsType = "btrfs";
       options = [ "subvol=@swap" ];
     };
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/802C-7FDD";
+    {
+      device = "/dev/disk/by-uuid/802C-7FDD";
       fsType = "vfat";
       options = [ "fmask=0022" "dmask=0022" ];
     };
