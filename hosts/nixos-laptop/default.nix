@@ -8,6 +8,7 @@ let
   pkgs-unstable = inputs.nixpkgs-unstable.legacyPackages.${pkgs.stdenv.hostPlatform.system};
   # 🌟 CORE APPS & THEME
   myBrowser = "google-chrome";
+  myBrowserCmd = if myBrowser == "google-chrome" then "google-chrome-stable" else myBrowser;
   myTerminal = "kitty";
   myShell = "zsh";
   myEditor = "vscode";
@@ -88,7 +89,7 @@ delib.host {
         # ---------------------------------------------------------------
         terminal = myTerminal;
         shell = myShell;
-        browser = "google-chrome";
+        browser = myBrowserCmd;
         editor = "code";
         fileManager = myFileManager;
 
@@ -210,8 +211,8 @@ delib.host {
       programs.zoxide.enable = true;
 
         programs.caelestia = {
-          enable = true;
-          enableOnHyprland = true;
+          enable = false;
+          enableOnHyprland = false;
         };
 
       programs.noctalia = {
@@ -296,7 +297,7 @@ delib.host {
         extraBinds = [
           "$Mod SHIFT, return, exec, [workspace special:magic] $term --class scratch-term"
           "$Mod SHIFT, F, exec, [workspace special:magic] $term --class scratch-fs -e yazi"
-          "$Mod SHIFT, B, exec, [workspace special:magic] ${myBrowser} --new-window --class scratch-browser"
+          "$Mod SHIFT, B, exec, [workspace special:magic] ${myBrowserCmd} --new-window --class scratch-browser"
         ];
       };
 
@@ -315,7 +316,7 @@ delib.host {
         };
 
         execOnce = [
-          "${myBrowser}"
+          "${myBrowserCmd}"
           "${myEditor}"
           "${myFileManager}"
           "${myTerminal}"
